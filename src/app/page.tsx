@@ -126,19 +126,9 @@ export default function Home() {
                 style={{ color: "var(--foreground-muted)", borderColor: "var(--border)" }}
               >
                 <span className="flex items-center space-x-1.5" style={{ color: "var(--foreground)" }}>
-                  <Navigation className="w-4 h-4 text-emerald-600" />
+                  <Navigation className="w-4 h-4" style={{ color: "var(--accent-cyber-lime)" }} />
                   <span className="capitalize">{viewMode} Mode</span>
                 </span>
-
-                {viewMode !== "search" && (
-                  <button
-                    onClick={() => setViewMode("search")}
-                    className="text-[11px] font-semibold underline transition"
-                    style={{ color: "var(--foreground-muted)" }}
-                  >
-                    Reset Search
-                  </button>
-                )}
               </div>
 
               {/* Step 1: Search Form */}
@@ -207,16 +197,16 @@ export default function Home() {
                 >
                   <div className="flex items-center space-x-3 overflow-hidden">
                     <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center shrink-0 shadow-md">
-                      <Search className="w-4 h-4 text-emerald-400" />
+                      <Search className="w-4 h-4" style={{ color: "var(--foreground-muted)" }} />
                     </div>
                     <div className="flex flex-col truncate">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Mau pergi ke mana?</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Mau pergi ke mana?</span>
                       <span className="text-xs font-bold text-gray-900 truncate">
                         {origin.name.split(" ")[0]} ➔ {destination.name.split(" ")[0]}
                       </span>
                     </div>
                   </div>
-                  <span className="px-3.5 py-2 bg-black text-white text-xs font-extrabold rounded-xl shrink-0 group-hover:bg-emerald-600 transition shadow-md flex items-center space-x-1">
+                  <span className="px-3.5 py-2 bg-black text-white text-xs font-bold rounded-xl shrink-0 group-hover:bg-gray-800 transition shadow-md flex items-center space-x-1">
                     <span>Cari Rute</span>
                   </span>
                 </div>
@@ -225,37 +215,45 @@ export default function Home() {
               {/* Floating Vehicle Tracking Card (Top Right Desktop/Mobile) */}
               <div className="absolute top-4 right-4 z-10 hidden sm:block">
                 <div
-                  className="p-3.5 rounded-2xl w-64 shadow-xl space-y-2 backdrop-blur-md border"
+                  className="p-5 rounded-2xl w-72 shadow-xl space-y-3 backdrop-blur-md border"
                   style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black flex items-center space-x-1.5" style={{ color: "var(--foreground)" }}>
-                      <Bus className="w-4 h-4 text-emerald-600" />
+                    <span className="text-sm font-black flex items-center space-x-2" style={{ color: "var(--foreground)" }}>
+                      <Bus className="w-5 h-5" style={{ color: "var(--foreground)" }} />
                       <span>{selectedRoute.vehicle.name}</span>
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">
+                    <span
+                      className="px-3 py-1 rounded-full text-xs font-bold shadow-inner border tracking-widest uppercase"
+                      style={{
+                        background: "var(--surface-secondary)",
+                        color: "var(--foreground)",
+                        borderColor: "var(--border)"
+                      }}
+                    >
                       ● ON ROUTE
                     </span>
                   </div>
 
-                  <div className="text-xs font-medium" style={{ color: "var(--foreground-muted)" }}>
+                  <div className="text-sm font-medium" style={{ color: "var(--foreground-muted)" }}>
                     <p className="truncate font-semibold" style={{ color: "var(--foreground)" }}>
                       {selectedRoute.vehicle.currentLocationName}
                     </p>
-                    <p className="text-[10px]">↓ Next: {selectedRoute.vehicle.nextStopName}</p>
+                    <p className="text-xs mt-0.5">↓ Next: {selectedRoute.vehicle.nextStopName}</p>
                   </div>
 
                   <div
-                    className="flex items-center justify-between pt-1 border-t text-xs"
+                    className="flex items-center justify-between pt-3 border-t text-sm"
                     style={{ borderColor: "var(--border)" }}
                   >
-                    <span className="font-extrabold text-emerald-600">{selectedRoute.vehicle.estimatedArrivalNextStop}</span>
+                    <span className="font-bold" style={{ color: "var(--foreground)" }}>{selectedRoute.vehicle.estimatedArrivalNextStop}</span>
                     <button
                       onClick={() => {
                         setViewMode("journey");
                         setActiveTab("trips");
                       }}
-                      className="px-2.5 py-1 bg-black text-white text-[10px] font-bold rounded-lg hover:bg-gray-800 transition"
+                      className="px-4 py-2 text-xs font-bold rounded-lg transition-all hover:scale-[1.02] shadow-sm border"
+                      style={{ background: "var(--foreground)", color: "var(--background)", borderColor: "rgba(255,255,255,0.1)" }}
                     >
                       View Trip
                     </button>
@@ -290,15 +288,15 @@ export default function Home() {
             >
               <button
                 onClick={() => setIsSearchModalOpen(false)}
-                className="flex items-center space-x-2 px-4 py-2 bg-black text-white hover:bg-gray-800 rounded-full font-extrabold text-xs shadow-md active:scale-95 transition"
+                className="flex items-center space-x-2 px-4 py-2 bg-black text-white hover:bg-gray-800 rounded-full font-bold text-xs shadow-md active:scale-95 transition"
               >
-                <ArrowLeft className="w-4 h-4 text-emerald-400" />
+                <ArrowLeft className="w-4 h-4" style={{ color: "var(--foreground-muted)" }} />
                 <span>Kembali ke Peta</span>
               </button>
 
               <div className="flex items-center space-x-2">
-                <Navigation className="w-4 h-4 text-emerald-600 hidden sm:block" />
-                <h3 className="font-extrabold text-gray-900 text-xs sm:text-sm uppercase tracking-wider">
+                <Navigation className="w-4 h-4 hidden sm:block" style={{ color: "var(--foreground-muted)" }} />
+                <h3 className="font-bold text-gray-900 text-xs sm:text-sm uppercase tracking-wider">
                   {viewMode === "search" ? "Pencarian Rute Perjalanan" : `${viewMode} Mode`}
                 </h3>
               </div>

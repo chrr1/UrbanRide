@@ -10,6 +10,10 @@
   --foreground-muted: #6B6B6B;
   --border: #EAEAEA;
   --accent: #111111;
+  
+  /* Cyber EV Accents (Darker for Light Mode visibility) */
+  --accent-cyber-lime: #059669; /* Emerald 600 */
+  --accent-cyber-cyan: #0284c7; /* Sky 600 */
 
   /* Header & Panel */
   --header-bg: rgba(255,255,255,0.92);
@@ -30,6 +34,10 @@
   --foreground-muted: #8A8A8A;
   --border: #2E2E32;
   --accent: #FFFFFF;
+
+  /* Cyber EV Accents */
+  --accent-cyber-lime: #ccff00;
+  --accent-cyber-cyan: #00f3ff;
 
   /* Header & Panel */
   --header-bg: rgba(18,18,20,0.92);
