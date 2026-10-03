@@ -61,24 +61,39 @@ export default function LiveNavigationPanel({
   };
 
   return (
-    <div className="floating-card p-5 w-full bg-white space-y-4 shadow-2xl border-2 border-black/10">
+    <div className="floating-card p-5 w-full space-y-4 shadow-2xl glass-panel relative overflow-hidden">
+      {/* Background ambient glow */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/20 blur-[60px] rounded-full pointer-events-none" />
+
       {/* Top Banner */}
-      <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-        <div className="flex items-center space-x-2">
-          <span className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
-          <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-            ● LIVE TRACKING ACTIVE
+      <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: "var(--border)" }}>
+        <div className="flex items-center space-x-2.5">
+          <span className="w-2.5 h-2.5 rounded-full animate-ping" style={{ background: "var(--accent-cyber-lime)", boxShadow: "0 0 10px var(--accent-cyber-lime)" }} />
+          <span
+            className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-inner border"
+            style={{
+              background: "var(--surface-secondary)",
+              color: "var(--foreground)",
+              borderColor: "var(--border)"
+            }}
+          >
+            LIVE TRACKING ACTIVE
           </span>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsSimulating(!isSimulating)}
-            className="p-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-bold flex items-center space-x-1"
+            className="p-2 rounded-full text-xs font-bold flex items-center space-x-1.5 transition-all hover:scale-105 border shadow-sm backdrop-blur-md"
             title={isSimulating ? "Pause Simulation" : "Play Simulation"}
+            style={{
+              background: "var(--surface-secondary)",
+              color: "var(--foreground)",
+              borderColor: "var(--border)"
+            }}
           >
-            {isSimulating ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 text-emerald-600" />}
-            <span className="text-[10px] hidden sm:inline">{isSimulating ? "Simulating" : "Paused"}</span>
+            {isSimulating ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            <span className="text-[10px] hidden sm:inline tracking-wider uppercase font-bold">{isSimulating ? "Simulating" : "Paused"}</span>
           </button>
         </div>
       </div>
@@ -87,53 +102,80 @@ export default function LiveNavigationPanel({
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center space-x-2">
-            <h3 className="text-xl font-extrabold text-gray-900">{route.vehicle.name}</h3>
-            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+            <h3 className="text-2xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>{route.vehicle.name}</h3>
+            <span
+              className="text-xs font-bold px-2.5 py-1 rounded-md border"
+              style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)", borderColor: "var(--border)" }}
+            >
               {route.vehicle.code}
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5 font-medium">Driver: {route.vehicle.driverName}</p>
+          <p className="text-sm mt-1 font-semibold" style={{ color: "var(--foreground-muted)" }}>Driver: {route.vehicle.driverName}</p>
         </div>
 
         <button
           onClick={onViewTicket}
-          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gray-900 text-white text-xs font-bold hover:bg-black transition shadow-xs"
+          className="flex items-center space-x-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all hover:scale-105 shadow-lg border"
+          style={{
+            background: "var(--foreground)",
+            color: "var(--background)",
+            borderColor: "rgba(255,255,255,0.1)"
+          }}
         >
-          <TicketIcon className="w-3.5 h-3.5 text-emerald-400" />
+          <TicketIcon className="w-4 h-4" />
           <span>My Ticket</span>
         </button>
       </div>
 
       {/* Journey Progress Timeline Indicator (Matching PRD Section 15) */}
-      <div className="py-2">
-        <div className="flex items-center justify-between mb-1.5 text-[11px] font-bold text-gray-700">
+      <div className="py-3">
+        <div className="flex items-center justify-between mb-2 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
           <span>{stops[0]?.name}</span>
           <span>{stops[stops.length - 1]?.name}</span>
         </div>
 
-        <div className="relative w-full h-2.5 bg-gray-100 rounded-full overflow-hidden flex items-center p-0.5">
+        <div className="relative w-full h-3 rounded-full flex items-center p-0.5 shadow-inner border" style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}>
+          {/* Progress Fill */}
           <div
-            className="h-full bg-emerald-500 rounded-full transition-all duration-700"
-            style={{ width: `${(currentStopIndex / (stops.length - 1)) * 100}%` }}
-          />
+            className="relative h-full rounded-full transition-all duration-700 ease-in-out flex items-center justify-end pr-1"
+            style={{ width: `${(currentStopIndex / (stops.length - 1)) * 100}%`, background: "var(--accent-cyber-lime)", boxShadow: "0 0 10px rgba(204,255,0,0.5)" }}
+          >
+            {/* Animated Vehicle Icon at the head of the progress bar */}
+            <div
+              className="w-6 h-6 rounded-full flex items-center justify-center absolute -right-3 z-20 shadow-md border-[3px]"
+              style={{ background: "var(--background)", borderColor: "var(--accent-cyber-lime)" }}
+            >
+              <Bus className="w-3.5 h-3.5 animate-pulse" style={{ color: "var(--foreground)" }} />
+            </div>
+          </div>
         </div>
 
-        <div className="flex justify-between items-center mt-2">
+        <div className="flex justify-between items-center mt-3 relative px-1">
+          {/* Connecting line behind dots */}
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-0.5 -z-10" style={{ background: "var(--border)" }} />
+
           {stops.map((st, idx) => {
             const isPassed = idx <= currentStopIndex;
             const isCurrent = idx === currentStopIndex;
             return (
-              <div key={st.id} className="flex flex-col items-center">
+              <div key={st.id} className="flex flex-col items-center relative z-10 px-1" style={{ background: "var(--card-bg)" }}>
                 <div
-                  className={`w-3.5 h-3.5 rounded-full border-2 transition-all ${
-                    isCurrent
-                      ? "bg-emerald-500 border-black ring-4 ring-emerald-200 scale-125"
+                  className={`w-4 h-4 rounded-full border-[3px] transition-all duration-500 ${isCurrent
+                      ? "scale-150"
                       : isPassed
-                      ? "bg-emerald-500 border-white"
-                      : "bg-gray-200 border-white"
-                  }`}
+                        ? ""
+                        : ""
+                    }`}
+                  style={{
+                    background: isPassed ? "var(--foreground)" : "var(--surface)",
+                    borderColor: isCurrent ? "var(--accent-cyber-lime)" : "var(--border)",
+                    boxShadow: isCurrent ? "0 0 10px var(--accent-cyber-lime)" : "none"
+                  }}
                 />
-                <span className="text-[9px] font-bold text-gray-500 mt-1 max-w-[60px] truncate text-center">
+                <span
+                  className="text-[10px] font-bold mt-2 max-w-[70px] truncate text-center uppercase tracking-wide transition-colors"
+                  style={{ color: isCurrent ? "var(--foreground)" : "var(--foreground-muted)", textShadow: isCurrent ? "0 0 10px rgba(255,255,255,0.3)" : "none" }}
+                >
                   {st.name.split(" ")[0]}
                 </span>
               </div>
@@ -143,40 +185,56 @@ export default function LiveNavigationPanel({
       </div>
 
       {/* Next Stop Main Card */}
-      <div className="p-4 rounded-2xl bg-gray-900 text-white space-y-2 relative overflow-hidden shadow-lg">
-        <div className="flex items-center justify-between text-xs text-emerald-400 font-bold uppercase tracking-wider">
+      <div
+        className="p-5 rounded-2xl space-y-3 relative overflow-hidden shadow-sm border glass-panel"
+        style={{
+          background: "var(--surface-secondary)",
+          borderColor: "var(--border)"
+        }}
+      >
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest" style={{ color: "var(--accent-cyber-lime)" }}>
           <span>Next Stop</span>
-          <span>{remainingStops} stops remaining</span>
+          <span style={{ color: "var(--foreground-muted)" }}>{remainingStops} stops remaining</span>
         </div>
 
         <div className="flex items-baseline justify-between">
-          <h4 className="text-lg font-extrabold tracking-tight">{nextStop?.name}</h4>
-          <span className="text-sm font-bold text-emerald-400">
+          <h4 className="text-2xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>{nextStop?.name}</h4>
+          <span className="text-base font-bold" style={{ color: "var(--accent-cyber-lime)", textShadow: "0 0 15px rgba(204,255,0,0.4)" }}>
             {isCompleted ? "Arrived" : "4 min away"}
           </span>
         </div>
 
-        <div className="flex items-center space-x-2 text-xs text-gray-300 pt-1 border-t border-gray-800">
-          <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Current Location: <b>{currentStop?.name}</b></span>
+        <div className="flex items-center space-x-2 text-sm pt-3 border-t" style={{ color: "var(--foreground-muted)", borderColor: "var(--border)" }}>
+          <MapPin className="w-4 h-4" />
+          <span>Current Location: <b style={{ color: "var(--foreground)" }}>{currentStop?.name}</b></span>
         </div>
       </div>
 
       {/* Manual Step Forward & End Journey Actions */}
-      <div className="flex items-center space-x-2 pt-1">
+      <div className="flex items-center space-x-3 pt-2">
         {!isCompleted && (
           <button
             onClick={handleNextStepManual}
-            className="flex-1 py-2.5 px-3 bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-bold rounded-xl transition flex items-center justify-center space-x-1"
+            className="flex-1 py-3.5 px-4 text-sm font-bold rounded-2xl transition-all hover:scale-[1.02] flex items-center justify-center space-x-2 shadow-sm border backdrop-blur-md"
+            style={{
+              background: "var(--surface)",
+              color: "var(--foreground)",
+              borderColor: "var(--border)"
+            }}
           >
-            <span>Simulate Next Stop</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>Simulate Stop</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         )}
 
         <button
           onClick={onEndJourney}
-          className="flex-1 py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold rounded-xl transition flex items-center justify-center space-x-1"
+          className="flex-1 py-3.5 px-4 text-sm font-bold rounded-2xl transition-all hover:scale-[1.02] flex items-center justify-center space-x-2 shadow-sm border backdrop-blur-md"
+          style={{
+            background: "var(--foreground)",
+            color: "var(--background)",
+            borderColor: "rgba(255,255,255,0.1)"
+          }}
         >
           <span>End Journey</span>
         </button>
