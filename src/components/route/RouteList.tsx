@@ -29,13 +29,13 @@ export default function RouteList({
 
   const sortTabs = [
     { id: "ALL",         label: "All Routes",    activeClass: "bg-gray-900 text-white" },
-    { id: "RECOMMENDED", label: "Recommended",   activeClass: "bg-emerald-600 text-white" },
+    { id: "RECOMMENDED", label: "Recommended",   activeClass: "" },
     { id: "FASTEST",     label: "Fastest",       activeClass: "bg-gray-900 text-white" },
     { id: "CHEAPEST",    label: "Cheapest",      activeClass: "bg-amber-600 text-white" },
   ] as const;
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="flex flex-col space-y-3 w-full">
       {/* Header */}
       <div className="flex items-center justify-between pb-2 border-b" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center space-x-2">
@@ -50,7 +50,7 @@ export default function RouteList({
             </button>
           )}
           <div>
-            <h3 className="font-extrabold text-base" style={{ color: "var(--foreground)" }}>
+            <h3 className="font-bold text-base" style={{ color: "var(--foreground)" }}>
               Routes to {destinationName}
             </h3>
             <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
@@ -70,7 +70,9 @@ export default function RouteList({
               activeSort === tab.id ? tab.activeClass : ""
             }`}
             style={
-              activeSort !== tab.id
+              activeSort === tab.id && tab.id === "RECOMMENDED"
+                ? { background: "var(--accent-cyber-lime)", color: "#000" }
+                : activeSort !== tab.id
                 ? { background: "var(--surface-secondary)", color: "var(--foreground-muted)", border: "1px solid var(--border)" }
                 : {}
             }
@@ -81,7 +83,7 @@ export default function RouteList({
       </div>
 
       {/* Route Cards */}
-      <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+      <div className="space-y-3.5 pt-1 pb-2">
         {filteredRoutes.map((route) => (
           <RouteCard
             key={route.id}
