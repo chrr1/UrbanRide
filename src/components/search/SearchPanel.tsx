@@ -60,7 +60,7 @@ export default function SearchPanel({
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2
-            className="text-xl font-extrabold tracking-tight"
+            className="text-xl font-bold tracking-tight"
             style={{ color: "var(--foreground)" }}
           >
             Where do you want to go?
@@ -69,7 +69,7 @@ export default function SearchPanel({
             Find the best routes & live transit options
           </p>
         </div>
-        
+
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3.5">
@@ -85,7 +85,7 @@ export default function SearchPanel({
             className="flex items-center space-x-2.5 p-3.5 rounded-xl border"
             style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
           >
-            <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100/30 flex-shrink-0" />
+            <div className="w-3.5 h-3.5 rounded-full flex-shrink-0" style={{ background: "var(--accent-cyber-lime)", boxShadow: "0 0 6px var(--accent-cyber-lime)" }} />
             <input
               type="text"
               readOnly
@@ -93,7 +93,7 @@ export default function SearchPanel({
               className="w-full bg-transparent text-sm font-bold outline-hidden cursor-default"
               style={{ color: "var(--foreground)" }}
             />
-            <span className="px-2.5 py-0.5 rounded-md text-xs font-extrabold bg-emerald-100 text-emerald-800">
+            <span className="px-2.5 py-0.5 rounded-md text-xs font-bold border" style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)", borderColor: "var(--border)" }}>
               Current
             </span>
           </div>
@@ -184,7 +184,7 @@ export default function SearchPanel({
                       <MapPin className="w-4 h-4" style={{ color: "var(--foreground-muted)" }} />
                     </div>
                     <div>
-                      <p className="text-sm font-extrabold" style={{ color: "var(--foreground)" }}>
+                      <p className="text-sm font-bold" style={{ color: "var(--foreground)" }}>
                         {loc.name}
                       </p>
                       <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
@@ -207,7 +207,7 @@ export default function SearchPanel({
         {/* Quick Favorite Location Chips */}
         <div className="space-y-1.5 pt-1">
           <span
-            className="text-xs font-extrabold uppercase tracking-wider"
+            className="text-xs font-bold uppercase tracking-wider"
             style={{ color: "var(--foreground-muted)" }}
           >
             Quick Destination
@@ -228,20 +228,20 @@ export default function SearchPanel({
                     setToLocation(loc);
                     setToSearchInput(loc.name);
                   }}
-                  className="px-3.5 py-2 rounded-full border text-xs font-extrabold shrink-0 flex items-center space-x-2 transition-all active:scale-95"
+                  className="px-3.5 py-2 rounded-full border text-xs font-bold shrink-0 flex items-center space-x-2 transition-all active:scale-95"
                   style={
                     isSelected
                       ? {
-                          background: "var(--foreground)",
-                          color: "var(--surface)",
-                          borderColor: "var(--foreground)",
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                        }
+                        background: "var(--foreground)",
+                        color: "var(--surface)",
+                        borderColor: "var(--foreground)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                      }
                       : {
-                          background: "var(--surface-secondary)",
-                          color: "var(--foreground-muted)",
-                          borderColor: "var(--border)",
-                        }
+                        background: "var(--surface-secondary)",
+                        color: "var(--foreground-muted)",
+                        borderColor: "var(--border)",
+                      }
                   }
                 >
                   <Icon className="w-4 h-4" style={{ color: isSelected ? "var(--surface)" : "var(--foreground-muted)" }} />
@@ -307,7 +307,7 @@ export default function SearchPanel({
         <button
           type="submit"
           disabled={!toLocation || isLoading}
-          className="w-full mt-2.5 py-3.5 px-4 bg-black text-white text-sm font-extrabold rounded-full shadow-lg hover:bg-gray-800 active:scale-[0.99] transition disabled:opacity-50 flex items-center justify-center space-x-2"
+          className="w-full mt-2.5 py-3.5 px-4 bg-black text-white text-sm font-bold rounded-full shadow-lg hover:bg-gray-800 active:scale-[0.99] transition disabled:opacity-50 flex items-center justify-center space-x-2"
         >
           {isLoading ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
