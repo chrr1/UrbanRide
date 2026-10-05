@@ -117,7 +117,7 @@ export default function Home() {
 
             {/* Left Sidebar Control Panel (DESKTOP ONLY - Always Visible Side-by-Side) */}
             <div
-              className="hidden md:flex md:w-[400px] lg:w-[440px] p-5 z-20 overflow-y-auto max-h-full backdrop-blur-md border-r flex-col space-y-4 shrink-0"
+              className="hidden md:flex md:w-[400px] lg:w-[440px] p-5 z-20 overflow-y-auto overflow-x-hidden max-h-full backdrop-blur-md border-r flex-col space-y-4 shrink-0"
               style={{ background: "var(--sidebar-bg)", borderColor: "var(--border)" }}
             >
               {/* Tab navigation indicators inside panel */}

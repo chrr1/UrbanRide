@@ -282,35 +282,39 @@ export default function MapView({
     <div className="relative w-full h-full min-h-[500px]">
 
       {/* Floating Mode Filter Bar — TOP CENTER */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-1 bg-white/95 backdrop-blur-md rounded-full shadow-lg border border-gray-200 text-xs font-bold select-none">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1.5 p-1.5 bg-white/95 backdrop-blur-md rounded-full shadow-lg border border-gray-200 select-none">
         <button
           type="button"
           onClick={() => setActiveFilter("all")}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full transition-all ${
+          className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all text-sm font-semibold ${
             activeFilter === "all" ? "bg-gray-900 text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
           }`}
         >
-          <Layers className="w-3.5 h-3.5" />
+          <Layers className="w-4 h-4" />
           <span>All</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveFilter("bus")}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full transition-all ${
-            activeFilter === "bus" ? "bg-emerald-600 text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-          }`}
+          className="flex items-center space-x-2 px-4 py-2 rounded-full transition-all text-sm font-semibold"
+          style={activeFilter === "bus"
+            ? { background: "var(--accent-cyber-lime)", color: "#000" }
+            : { color: "var(--foreground-muted)" }
+          }
         >
-          <Bus className="w-3.5 h-3.5" />
+          <Bus className="w-4 h-4" />
           <span>Bus</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveFilter("train")}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full transition-all ${
-            activeFilter === "train" ? "bg-blue-600 text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-          }`}
+          className="flex items-center space-x-2 px-4 py-2 rounded-full transition-all text-sm font-semibold"
+          style={activeFilter === "train"
+            ? { background: "var(--foreground)", color: "var(--background)" }
+            : { color: "var(--foreground-muted)" }
+          }
         >
-          <Train className="w-3.5 h-3.5" />
+          <Train className="w-4 h-4" />
           <span>Metro</span>
         </button>
       </div>
