@@ -40,7 +40,7 @@ export default function BottomNavigation({ activeTab, onTabChange }: BottomNavPr
               <div
                 className={`p-1.5 rounded-full ${isActive ? "bg-black" : "bg-transparent"}`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? "text-emerald-400" : ""}`} />
+                <Icon className="w-5 h-5" style={isActive ? { color: "var(--accent-cyber-lime)" } : {}} />
               </div>
               <span
                 className={`text-[10px] tracking-tight ${isActive ? "font-bold" : "font-medium"}`}
