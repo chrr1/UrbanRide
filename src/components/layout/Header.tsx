@@ -22,25 +22,25 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
 
   return (
     <header
-      className="sticky top-0 z-40 w-full px-4 sm:px-6 py-5 border-b shadow-xs backdrop-blur-md transition-colors"
+      className="sticky top-0 z-40 w-full px-4 sm:px-6 py-3 border-b shadow-xs backdrop-blur-md transition-colors"
       style={{
         background: "var(--header-bg)",
         borderColor: "var(--border)",
       }}
     >
-      <div className="max-w-[1340px] mx-auto flex items-center justify-between px-2 sm:px-4">
+      <div className="max-w-[1540px] mx-auto flex items-center justify-between px-2 sm:px-4">
 
         {/* Brand Logo */}
         <div
           onClick={() => onTabChange("map")}
           className="flex items-center space-x-2.5 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
-            <Bus className="w-5 h-5" style={{ color: "var(--accent-cyber-lime)" }} />
+          <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+            <Bus className="w-4.5 h-4.5" style={{ color: "var(--accent-cyber-lime)" }} />
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="font-bold text-xl tracking-tight" style={{ color: "var(--foreground)" }}>
+              <span className="font-bold text-lg sm:text-xl tracking-tight" style={{ color: "var(--foreground)" }}>
                 UrbanRide
               </span>
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-black text-white">

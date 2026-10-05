@@ -60,17 +60,32 @@ export default function MapView({
     // CRITICAL: invalidateSize ensures Leaflet recalculates container
     // dimensions after Next.js dynamic import finishes painting the DOM.
     // Without this, the map renders in a 0x0 container and tiles are blank.
-    requestAnimationFrame(() => {
-      map.invalidateSize({ animate: false });
+    const rafId = requestAnimationFrame(() => {
+      if (mapRef.current) {
+        try {
+          map.invalidateSize({ animate: false });
+        } catch {
+          // ignore if unmounted
+        }
+      }
     });
 
     // Also listen for container resize (flex layout changes)
     const resizeObserver = new ResizeObserver(() => {
-      map.invalidateSize({ animate: false });
+      if (mapRef.current) {
+        try {
+          map.invalidateSize({ animate: false });
+        } catch {
+          // ignore if unmounted
+        }
+      }
     });
-    resizeObserver.observe(mapContainerRef.current);
+    if (mapContainerRef.current) {
+      resizeObserver.observe(mapContainerRef.current);
+    }
 
     return () => {
+      cancelAnimationFrame(rafId);
       resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;

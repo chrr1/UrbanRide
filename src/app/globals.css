@@ -55,6 +55,23 @@
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease;
 }
 
+/* Responsive base scale for standard laptop screens and high-DPI scaling */
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 1024px) and (max-height: 860px) {
+  html {
+    font-size: 14.5px;
+  }
+}
+
+@media (min-width: 1280px) and (max-height: 740px) {
+  html {
+    font-size: 13.5px;
+  }
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
