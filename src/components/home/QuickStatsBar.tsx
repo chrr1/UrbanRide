@@ -34,7 +34,7 @@ export default function QuickStatsBar() {
             </div>
             <div className="truncate">
               <span
-                className="text-lg sm:text-xl font-bold tracking-tight block leading-none"
+                className="font-display text-lg sm:text-xl font-bold tracking-tight block leading-none"
                 style={{ color: "var(--foreground)" }}
               >
                 {item.value}

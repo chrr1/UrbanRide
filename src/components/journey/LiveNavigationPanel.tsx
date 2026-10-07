@@ -100,7 +100,7 @@ export default function LiveNavigationPanel({
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center space-x-2">
-            <h3 className="text-xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>{route.vehicle.name}</h3>
+            <h3 className="font-display text-xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>{route.vehicle.name}</h3>
             <span
               className="text-xs font-bold px-2 py-0.5 rounded-md border"
               style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)", borderColor: "var(--border)" }}
@@ -187,7 +187,7 @@ export default function LiveNavigationPanel({
         </div>
 
         <div className="flex items-baseline justify-between">
-          <h4 className="text-xl font-extrabold tracking-tight" style={{ color: "var(--foreground)" }}>{nextStop?.name}</h4>
+          <h4 className="font-display text-xl font-extrabold tracking-tight" style={{ color: "var(--foreground)" }}>{nextStop?.name}</h4>
           <span className="text-base font-extrabold" style={{ color: "var(--accent-cyber-lime)", textShadow: "0 0 12px rgba(204,255,0,0.4)" }}>
             {isCompleted ? "Arrived" : "4 min away"}
           </span>

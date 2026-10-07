@@ -40,7 +40,7 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="font-bold text-lg sm:text-xl tracking-tight" style={{ color: "var(--foreground)" }}>
+              <span className="font-display font-bold text-lg sm:text-xl tracking-tight" style={{ color: "var(--foreground)" }}>
                 UrbanRide
               </span>
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-black text-white">

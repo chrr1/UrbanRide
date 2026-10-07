@@ -219,7 +219,7 @@ export default function Home() {
                   style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-black flex items-center space-x-2" style={{ color: "var(--foreground)" }}>
+                    <span className="text-sm font-bold flex items-center space-x-2" style={{ color: "var(--foreground)" }}>
                       <Bus className="w-5 h-5" style={{ color: "var(--foreground)" }} />
                       <span>{selectedRoute.vehicle.name}</span>
                     </span>

@@ -130,15 +130,15 @@ export default function RouteCard({ route, isSelected = false, onSelect }: Route
       <div className="flex items-baseline justify-between mb-2">
         <div className="flex items-baseline space-x-2">
           <Clock className="w-4 h-4 self-center" style={{ color: "var(--foreground-muted)" }} />
-          <span className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
+          <span className="font-display text-xl sm:text-2xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
             {route.totalDurationMinutes} min
           </span>
-          <span className="text-xs sm:text-sm font-medium" style={{ color: "var(--foreground-muted)" }}>
+          <span className="text-xs sm:text-sm font-semibold" style={{ color: "var(--foreground-muted)" }}>
             • {route.stopsCount} stops
           </span>
         </div>
 
-        <span className="text-lg sm:text-xl font-bold" style={{ color: "var(--foreground)" }}>
+        <span className="font-display text-lg sm:text-xl font-bold" style={{ color: "var(--foreground)" }}>
           {formattedFare}
         </span>
       </div>

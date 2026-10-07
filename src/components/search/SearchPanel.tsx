@@ -90,7 +90,7 @@ export default function SearchPanel({
               type="text"
               readOnly
               value={fromLocation.name}
-              className="w-full bg-transparent text-sm font-bold outline-hidden cursor-default"
+              className="w-full bg-transparent text-sm font-medium outline-hidden cursor-default"
               style={{ color: "var(--foreground)" }}
             />
             <span className="px-2 py-0.5 rounded-md text-[11px] font-bold border" style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)", borderColor: "var(--border)" }}>
@@ -138,7 +138,7 @@ export default function SearchPanel({
                 setShowToDropdown(true);
               }}
               onFocus={() => setShowToDropdown(true)}
-              className="w-full bg-transparent text-sm font-bold outline-hidden"
+              className="w-full bg-transparent text-sm font-medium outline-hidden"
               style={{
                 color: "var(--foreground)",
               }}
