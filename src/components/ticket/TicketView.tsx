@@ -26,21 +26,22 @@ export default function TicketView({ route, onClose }: TicketViewProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl">
+      {/* Close Button — fixed to top-right of backdrop so it's never clipped */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 flex items-center space-x-2 text-white/70 hover:text-white text-xs font-bold transition z-10 px-3 py-2 rounded-xl"
+          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
+        >
+          <X className="w-4 h-4" />
+          <span>Close</span>
+        </button>
+      )}
+
       <div
         className="relative w-full max-w-sm animate-fadeIn"
         style={{ perspective: "1000px" }}
       >
-        {/* Close Button */}
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="absolute -top-12 right-0 flex items-center space-x-2 text-white/80 hover:text-white text-xs font-bold transition"
-          >
-            <X className="w-4 h-4" />
-            <span>Close</span>
-          </button>
-        )}
-
         {/* === BOARDING PASS CARD === */}
         <div
           className={`relative rounded-[28px] overflow-hidden shadow-[0_32px_80px_-10px_rgba(0,0,0,0.5)] transition-all duration-700 cursor-pointer ${
