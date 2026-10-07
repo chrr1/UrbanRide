@@ -81,7 +81,7 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen flex flex-col font-sans pb-20 md:pb-6 transition-colors"
+      className="h-screen flex flex-col font-sans pb-20 md:pb-0 overflow-hidden transition-colors"
       style={{ background: "var(--background)", color: "var(--foreground)" }}
     >
 
@@ -101,7 +101,7 @@ export default function Home() {
       )}
 
       {/* Main Workspace Layout */}
-      <main className="flex-1 max-w-[1540px] w-full mx-auto px-4 sm:px-8 py-2 sm:py-3 space-y-4">
+      <main className="flex-1 min-h-0 max-w-[1540px] w-full mx-auto px-4 sm:px-8 py-1.5 sm:py-2 space-y-2.5 overflow-hidden flex flex-col">
 
         {/* Quick System Stats Cards Top Placement */}
         {(activeTab === "map" || activeTab === "routes" || activeTab === "trips") && (
@@ -111,7 +111,7 @@ export default function Home() {
         {/* Hero Section & Map Dashboard */}
         {(activeTab === "map" || activeTab === "routes" || activeTab === "trips") && (
           <div
-            className="relative w-full h-[580px] sm:h-[640px] md:h-[calc(100vh-220px)] min-h-[500px] rounded-3xl overflow-hidden shadow-sm border flex flex-col md:flex-row"
+            className="relative w-full flex-1 min-h-0 rounded-3xl overflow-hidden shadow-sm border flex flex-col md:flex-row"
             style={{ background: "var(--surface)", borderColor: "var(--border)" }}
           >
 
@@ -386,15 +386,17 @@ export default function Home() {
 
         {/* Standalone History Tab View */}
         {activeTab === "history" && (
-          <div className="max-w-2xl mx-auto py-2">
-            <HistoryView
-              onRebookRoute={(destName) => {
-                setActiveTab("map");
-                setViewMode("search");
-                setToastMsg(`Rebooking trip to ${destName}`);
-              }}
-              onViewTicketModal={() => setShowTicketModal(true)}
-            />
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="max-w-2xl mx-auto py-2">
+              <HistoryView
+                onRebookRoute={(destName) => {
+                  setActiveTab("map");
+                  setViewMode("search");
+                  setToastMsg(`Rebooking trip to ${destName}`);
+                }}
+                onViewTicketModal={() => setShowTicketModal(true)}
+              />
+            </div>
           </div>
         )}
 
