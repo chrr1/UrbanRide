@@ -27,7 +27,7 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
 });
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"map" | "routes" | "trips" | "ticket" | "history">("map");
+  const [activeTab, setActiveTab] = useState<"map" | "ticket" | "history">("map");
   const [viewMode, setViewMode] = useState<"search" | "results" | "detail" | "journey">("search");
 
   const [origin, setOrigin] = useState<LocationItem>(LOCATIONS[0]);
@@ -51,7 +51,6 @@ export default function Home() {
     setTimeout(() => {
       setIsLoadingSearch(false);
       setViewMode("results");
-      setActiveTab("routes");
       setToastMsg(`Found 3 routes to ${toLoc.name}`);
     }, 600);
   };
@@ -66,9 +65,8 @@ export default function Home() {
   const handleStartJourney = (route: RouteOption) => {
     setSelectedRoute(route);
     setViewMode("journey");
-    setActiveTab("trips");
     setActiveStopIndex(1);
-    setIsSearchModalOpen(false); // Close modal on journey start to show 100% full map
+    setIsSearchModalOpen(false);
     setToastMsg(`Journey Started! Tracking ${route.vehicle.name}`);
   };
 
@@ -104,12 +102,12 @@ export default function Home() {
       <main className="flex-1 min-h-0 max-w-[1540px] w-full mx-auto px-4 sm:px-8 py-1.5 sm:py-2 space-y-2.5 overflow-hidden flex flex-col">
 
         {/* Quick System Stats Cards Top Placement */}
-        {(activeTab === "map" || activeTab === "routes" || activeTab === "trips") && (
+        {activeTab === "map" && (
           <QuickStatsBar />
         )}
 
         {/* Hero Section & Map Dashboard */}
-        {(activeTab === "map" || activeTab === "routes" || activeTab === "trips") && (
+        {activeTab === "map" && (
           <div
             className="relative w-full flex-1 min-h-0 rounded-3xl overflow-hidden shadow-sm border flex flex-col md:flex-row"
             style={{ background: "var(--surface)", borderColor: "var(--border)" }}

@@ -1,11 +1,11 @@
 "use client";
 
-import { Bus, Map, Navigation, Ticket, History, User, HelpCircle, Bell, Sun, Moon } from "lucide-react";
+import { Bus, Map, Ticket, History, User, HelpCircle, Bell, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
 interface HeaderProps {
-  activeTab: "map" | "routes" | "trips" | "ticket" | "history";
-  onTabChange: (tab: "map" | "routes" | "trips" | "ticket" | "history") => void;
+  activeTab: "map" | "ticket" | "history";
+  onTabChange: (tab: "map" | "ticket" | "history") => void;
 }
 
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
@@ -14,21 +14,19 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
 
   const navItems = [
     { id: "map", label: "Map Dashboard", icon: Map },
-    { id: "routes", label: "Routes", icon: Navigation },
-    { id: "trips", label: "Active Trips", icon: Bus },
     { id: "ticket", label: "Ticket", icon: Ticket },
     { id: "history", label: "History", icon: History },
   ] as const;
 
   return (
     <header
-      className="sticky top-0 z-40 w-full px-4 sm:px-6 py-3 border-b shadow-xs backdrop-blur-md transition-colors"
+      className="sticky top-0 z-40 w-full px-3 sm:px-4 py-3 border-b shadow-xs backdrop-blur-md transition-colors"
       style={{
         background: "var(--header-bg)",
         borderColor: "var(--border)",
       }}
     >
-      <div className="max-w-[1540px] mx-auto flex items-center justify-between px-2 sm:px-4">
+      <div className="max-w-[1080px] mx-auto flex items-center justify-between px-1 sm:px-2 w-full">
 
         {/* Brand Logo */}
         <div
@@ -42,9 +40,6 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
             <div className="flex items-center space-x-1.5">
               <span className="font-display font-bold text-lg sm:text-xl tracking-tight" style={{ color: "var(--foreground)" }}>
                 UrbanRide
-              </span>
-              <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-black text-white">
-                v2.0
               </span>
             </div>
             <p className="text-[10px] font-medium hidden sm:block leading-tight" style={{ color: "var(--foreground-muted)" }}>

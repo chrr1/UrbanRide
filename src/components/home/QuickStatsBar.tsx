@@ -4,10 +4,10 @@ import { Route, MapPin, Bus, GitBranch } from "lucide-react";
 
 export default function QuickStatsBar() {
   const stats = [
-    { label: "Routes Active", value: "12+", icon: Route, accentColor: "var(--accent-cyber-lime)" },
-    { label: "Stations & Hubs", value: "38", icon: MapPin, accentColor: "var(--foreground-muted)" },
-    { label: "Live Vehicles", value: "24", icon: Bus, accentColor: "var(--foreground-muted)" },
-    { label: "Transit Lines", value: "8", icon: GitBranch, accentColor: "var(--foreground-muted)" },
+    { label: "Routes Active",  value: "12+", icon: Route,     accentColor: "var(--accent-cyber-lime)" },
+    { label: "Stations & Hubs", value: "38", icon: MapPin,    accentColor: "var(--accent-cyber-cyan)" },
+    { label: "Live Vehicles",  value: "24",  icon: Bus,        accentColor: "#f59e0b" },
+    { label: "Transit Lines",  value: "8",   icon: GitBranch,  accentColor: "#a78bfa" },
   ];
 
   return (

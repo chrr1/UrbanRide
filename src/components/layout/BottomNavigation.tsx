@@ -1,17 +1,15 @@
 "use client";
 
-import { Map, Navigation, Bus, Ticket, History } from "lucide-react";
+import { Map, Ticket, History } from "lucide-react";
 
 interface BottomNavProps {
-  activeTab: "map" | "routes" | "trips" | "ticket" | "history";
-  onTabChange: (tab: "map" | "routes" | "trips" | "ticket" | "history") => void;
+  activeTab: "map" | "ticket" | "history";
+  onTabChange: (tab: "map" | "ticket" | "history") => void;
 }
 
 export default function BottomNavigation({ activeTab, onTabChange }: BottomNavProps) {
   const items = [
     { id: "map", label: "Map", icon: Map },
-    { id: "routes", label: "Routes", icon: Navigation },
-    { id: "trips", label: "Trips", icon: Bus },
     { id: "ticket", label: "Ticket", icon: Ticket },
     { id: "history", label: "History", icon: History },
   ] as const;
