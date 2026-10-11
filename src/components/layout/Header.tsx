@@ -34,7 +34,7 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
           className="flex items-center space-x-2.5 cursor-pointer group"
         >
           <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
-            <Bus className="w-4.5 h-4.5" style={{ color: "var(--accent-cyber-lime)" }} />
+            <Bus className="w-4.5 h-4.5 text-white" />
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
