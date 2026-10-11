@@ -213,16 +213,16 @@ export default function Home() {
               {/* Floating Vehicle Tracking Card (Top Right Desktop/Mobile) */}
               <div className="absolute top-4 right-4 z-10 hidden sm:block">
                 <div
-                  className="p-5 rounded-2xl w-72 shadow-xl space-y-3 backdrop-blur-md border"
+                  className="p-3.5 rounded-xl w-60 sm:w-64 shadow-lg space-y-2.5 backdrop-blur-md border"
                   style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold flex items-center space-x-2" style={{ color: "var(--foreground)" }}>
-                      <Bus className="w-5 h-5" style={{ color: "var(--foreground)" }} />
+                    <span className="text-xs font-bold flex items-center space-x-1.5" style={{ color: "var(--foreground)" }}>
+                      <Bus className="w-4 h-4" style={{ color: "var(--foreground)" }} />
                       <span>{selectedRoute.vehicle.name}</span>
                     </span>
                     <span
-                      className="px-3 py-1 rounded-full text-xs font-bold shadow-inner border tracking-widest uppercase"
+                      className="px-2 py-0.5 rounded-full text-[10px] font-bold shadow-inner border tracking-wider uppercase"
                       style={{
                         background: "var(--surface-secondary)",
                         color: "var(--foreground)",
@@ -233,24 +233,24 @@ export default function Home() {
                     </span>
                   </div>
 
-                  <div className="text-sm font-medium" style={{ color: "var(--foreground-muted)" }}>
-                    <p className="truncate font-semibold" style={{ color: "var(--foreground)" }}>
+                  <div className="text-xs font-medium" style={{ color: "var(--foreground-muted)" }}>
+                    <p className="truncate font-semibold text-xs" style={{ color: "var(--foreground)" }}>
                       {selectedRoute.vehicle.currentLocationName}
                     </p>
-                    <p className="text-xs mt-0.5">↓ Next: {selectedRoute.vehicle.nextStopName}</p>
+                    <p className="text-[11px] mt-0.5">↓ Next: {selectedRoute.vehicle.nextStopName}</p>
                   </div>
 
                   <div
-                    className="flex items-center justify-between pt-3 border-t text-sm"
+                    className="flex items-center justify-between pt-2.5 border-t text-xs"
                     style={{ borderColor: "var(--border)" }}
                   >
                     <span className="font-bold" style={{ color: "var(--foreground)" }}>{selectedRoute.vehicle.estimatedArrivalNextStop}</span>
                     <button
                       onClick={() => {
                         setViewMode("journey");
-                        setActiveTab("trips");
+                        setActiveTab("map");
                       }}
-                      className="px-4 py-2 text-xs font-bold rounded-lg transition-all hover:scale-[1.02] shadow-sm border"
+                      className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all hover:scale-[1.02] shadow-sm border"
                       style={{ background: "var(--foreground)", color: "var(--background)", borderColor: "rgba(255,255,255,0.1)" }}
                     >
                       View Trip
