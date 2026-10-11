@@ -1,7 +1,9 @@
 "use client";
 
-import { Bus, Map, Ticket, History, User, HelpCircle, Bell, Sun, Moon } from "lucide-react";
+import { Bus, Map, Ticket, History, User, HelpCircle, Bell, Sun, Moon, LogIn, LogOut } from "lucide-react";
+import Link from "next/link";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
   activeTab: "map" | "ticket" | "history";
@@ -10,6 +12,7 @@ interface HeaderProps {
 
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const { isLoggedIn, user, logout } = useAuth();
   const isDark = theme === "dark";
 
   const navItems = [
@@ -17,6 +20,13 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
     { id: "ticket", label: "Ticket", icon: Ticket },
     { id: "history", label: "History", icon: History },
   ] as const;
+
+  const handleLogout = () => {
+    logout();
+    if (activeTab === "ticket" || activeTab === "history") {
+      onTabChange("map");
+    }
+  };
 
   return (
     <header
@@ -121,21 +131,45 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
             <HelpCircle className="w-4.5 h-4.5" />
           </button>
 
-          {/* User Profile */}
-          <div
-            className="flex items-center space-x-2 pl-3 border-l"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <div className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-xs shadow-xs ring-2 ring-gray-100/50">
-              <User className="w-4 h-4" />
-            </div>
-            <span
-              className="text-sm font-semibold hidden lg:inline-block"
-              style={{ color: "var(--foreground)" }}
+          {/* User Profile / Auth State */}
+          {isLoggedIn ? (
+            <div
+              className="flex items-center space-x-2 pl-3 border-l"
+              style={{ borderColor: "var(--border)" }}
             >
-              Mahasiswa
-            </span>
-          </div>
+              <div className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-xs shadow-xs ring-2 ring-gray-100/50">
+                <User className="w-4 h-4" />
+              </div>
+              <span
+                className="text-sm font-semibold hidden lg:inline-block max-w-[110px] truncate"
+                style={{ color: "var(--foreground)" }}
+              >
+                {user?.name || "Mahasiswa"}
+              </span>
+              <button
+                onClick={handleLogout}
+                title="Keluar / Logout"
+                className="p-1 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div className="pl-2.5 border-l" style={{ borderColor: "var(--border)" }}>
+              <Link
+                href="/login"
+                title="Masuk / Daftar Akun"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
+                style={{
+                  background: "var(--foreground)",
+                  color: "var(--background)",
+                }}
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Masuk</span>
+              </Link>
+            </div>
+          )}
         </div>
 
       </div>
