@@ -3,6 +3,8 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { TicketProvider } from "@/context/TicketContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,7 +32,11 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <TicketProvider>{children}</TicketProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

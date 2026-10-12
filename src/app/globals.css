@@ -321,3 +321,30 @@ h1, h2, h3, h4, h5, h6, .font-display {
   border-color: var(--border) !important;
 }
 
+/* --- Sliding Auth Panel Transitions --- */
+.auth-panel-aurora {
+  transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1) !important;
+  will-change: transform;
+}
+
+.auth-panel-form {
+  transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1) !important;
+  will-change: transform;
+}
+
+@media (min-width: 768px) {
+  .auth-panel-aurora.is-register {
+    transform: translateX(calc(100% + 1.5rem)) !important;
+  }
+  .auth-panel-aurora.is-login {
+    transform: translateX(0px) !important;
+  }
+
+  .auth-panel-form.is-register {
+    transform: translateX(calc(-100% - 1.5rem)) !important;
+  }
+  .auth-panel-form.is-login {
+    transform: translateX(0px) !important;
+  }
+}
+

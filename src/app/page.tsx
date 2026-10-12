@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import SearchPanel from "@/components/search/SearchPanel";
@@ -13,7 +14,10 @@ import HistoryView from "@/components/history/HistoryView";
 import QuickStatsBar from "@/components/home/QuickStatsBar";
 import { SuccessToast } from "@/components/feedback/FeedbackStates";
 import { LOCATIONS, MOCK_ROUTES, LocationItem, RouteOption } from "@/data/mockData";
-import { Bus, MapPin, Sparkles, Navigation, Layers, X, Search, ArrowLeft } from "lucide-react";
+import { Bus, Train, MapPin, Sparkles, Navigation, Layers, X, Search, ArrowLeft, Ticket, History, CheckCircle2, QrCode, Play, AlertCircle, ShoppingBag, RotateCcw } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useTicket } from "@/context/TicketContext";
+import AuthPromptModal from "@/components/auth/AuthPromptModal";
 
 // Dynamic Import MapView with SSR disabled for Leaflet compatibility
 const MapView = dynamic(() => import("@/components/map/MapView"), {
@@ -27,6 +31,10 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
 });
 
 export default function Home() {
+  const router = useRouter();
+  const { isLoggedIn, login } = useAuth();
+  const { activeTicket, hasActiveTicketForRoute, getActiveTicketForRoute, clearTickets } = useTicket();
+
   const [activeTab, setActiveTab] = useState<"map" | "ticket" | "history">("map");
   const [viewMode, setViewMode] = useState<"search" | "results" | "detail" | "journey">("search");
 
@@ -39,8 +47,87 @@ export default function Home() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
 
+  // Auth prompt modal state when a guest attempts to select a route
+  const [pendingRoute, setPendingRoute] = useState<RouteOption | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+
   // Uber / Grab Style Floating Search Bar & Modal State
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+
+  // Restore pending route or checkout actions
+  useEffect(() => {
+    // Check if returning from checkout with request to view a specific route detail
+    const viewRouteId = sessionStorage.getItem("urbanride-view-route");
+    if (viewRouteId) {
+      sessionStorage.removeItem("urbanride-view-route");
+      const found = MOCK_ROUTES.find((r) => r.id === viewRouteId);
+      if (found) {
+        setSelectedRoute(found);
+        setViewMode("detail");
+        setActiveTab("map");
+      }
+    }
+
+    // Check if redirected from checkout with immediate journey start
+    const startJourneyRouteId = sessionStorage.getItem("urbanride-start-journey");
+    if (startJourneyRouteId) {
+      sessionStorage.removeItem("urbanride-start-journey");
+      const found = MOCK_ROUTES.find((r) => r.id === startJourneyRouteId);
+      if (found) {
+        setSelectedRoute(found);
+        setViewMode("journey");
+        setActiveTab("map");
+        setActiveStopIndex(1);
+        setToastMsg(`Tiket aktif! Memulai navigasi ${found.vehicle.name}`);
+      }
+    }
+
+    // Check if requested to view ticket tab
+    const pendingTab = sessionStorage.getItem("urbanride-active-tab");
+    if (pendingTab === "ticket") {
+      sessionStorage.removeItem("urbanride-active-tab");
+      setActiveTab("ticket");
+    }
+
+    if (isLoggedIn) {
+      const pendingRouteId = sessionStorage.getItem("urbanride-pending-route");
+      if (pendingRouteId) {
+        sessionStorage.removeItem("urbanride-pending-route");
+        const found = MOCK_ROUTES.find((r) => r.id === pendingRouteId);
+        if (found) {
+          setSelectedRoute(found);
+          setViewMode("detail");
+          setToastMsg(`Selamat datang kembali! Rute #${found.vehicle.code} berhasil dipilih.`);
+        }
+      }
+    }
+  }, [isLoggedIn]);
+
+  const handleTabChange = (tab: "map" | "ticket" | "history") => {
+    if ((tab === "ticket" || tab === "history") && !isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+    setActiveTab(tab);
+    if (tab === "map" && viewMode === "results") setViewMode("search");
+  };
+
+  const handleViewTicket = () => {
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+    setShowTicketModal(true);
+  };
+
+  const handleBuyTicket = (route: RouteOption) => {
+    if (!isLoggedIn) {
+      setPendingRoute(route);
+      setShowAuthModal(true);
+      return;
+    }
+    router.push(`/checkout?routeId=${route.id}`);
+  };
 
   // Handle Search submit
   const handleSearch = (fromLoc: LocationItem, toLoc: LocationItem, preference: string) => {
@@ -55,10 +142,26 @@ export default function Home() {
     }, 600);
   };
 
-  // Handle selecting a route card
+  // Handle selecting a route card (Free exploration for all users)
   const handleSelectRoute = (route: RouteOption) => {
     setSelectedRoute(route);
     setViewMode("detail");
+  };
+
+  // Quick 1-click login handler directly inside modal
+  const handleQuickLogin = (route: RouteOption) => {
+    login("demo.rider@urbanride.id", "Demo Rider");
+    setSelectedRoute(route);
+    setViewMode("detail");
+    setShowAuthModal(false);
+    setToastMsg(`Login berhasil! Rute #${route.vehicle.code} terpilih.`);
+  };
+
+  // Navigate to full login page with route saved in sessionStorage
+  const handleGoToLogin = (route: RouteOption) => {
+    sessionStorage.setItem("urbanride-pending-route", route.id);
+    setShowAuthModal(false);
+    router.push("/login");
   };
 
   // Handle Start Journey
@@ -86,11 +189,7 @@ export default function Home() {
       {/* Top Header Navigation */}
       <Header
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          if (tab === "map" && viewMode === "results") setViewMode("search");
-          if (tab === "ticket") setShowTicketModal(true);
-        }}
+        onTabChange={handleTabChange}
       />
 
       {/* Success Feedback Toast */}
@@ -156,6 +255,10 @@ export default function Home() {
                   route={selectedRoute}
                   onBack={() => setViewMode("results")}
                   onStartJourney={handleStartJourney}
+                  onBuyTicket={handleBuyTicket}
+                  hasActiveTicket={hasActiveTicketForRoute(selectedRoute.id)}
+                  activeTicket={getActiveTicketForRoute(selectedRoute.id)}
+                  onViewTicket={handleViewTicket}
                 />
               )}
 
@@ -164,7 +267,7 @@ export default function Home() {
                 <LiveNavigationPanel
                   route={selectedRoute}
                   onEndJourney={handleEndJourney}
-                  onViewTicket={() => setShowTicketModal(true)}
+                  onViewTicket={handleViewTicket}
                   onStopIndexChange={(idx) => setActiveStopIndex(idx)}
                 />
               )}
@@ -350,6 +453,10 @@ export default function Home() {
                     route={selectedRoute}
                     onBack={() => setViewMode("results")}
                     onStartJourney={handleStartJourney}
+                    onBuyTicket={handleBuyTicket}
+                    hasActiveTicket={hasActiveTicketForRoute(selectedRoute.id)}
+                    activeTicket={getActiveTicketForRoute(selectedRoute.id)}
+                    onViewTicket={handleViewTicket}
                   />
                 )}
 
@@ -361,7 +468,7 @@ export default function Home() {
                       handleEndJourney();
                       setIsSearchModalOpen(false);
                     }}
-                    onViewTicket={() => setShowTicketModal(true)}
+                    onViewTicket={handleViewTicket}
                     onStopIndexChange={(idx) => setActiveStopIndex(idx)}
                   />
                 )}
@@ -370,29 +477,237 @@ export default function Home() {
           </div>
         )}
 
-        {/* Standalone Ticket Tab View */}
-        {activeTab === "ticket" && !showTicketModal && (
-          <div className="py-6 flex justify-center">
+        {/* Protected Auth State for Ticket Tab */}
+        {activeTab === "ticket" && !isLoggedIn && (
+          <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-8 text-center">
+            <div className="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center mb-4 shadow-sm border border-indigo-100 dark:border-indigo-900/50">
+              <Ticket className="w-8 h-8" />
+            </div>
+            <h2 className="text-xl font-bold font-display tracking-tight mb-2" style={{ color: "var(--foreground)" }}>
+              Tiket Boarding Pass Memerlukan Akun
+            </h2>
+            <p className="text-sm max-w-md mb-6 leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
+              Masuk untuk melihat tiket perjalanan aktif, QR code check-in, dan rincian transit Anda.
+            </p>
             <button
-              onClick={() => setShowTicketModal(true)}
-              className="py-3 px-6 bg-black text-white rounded-full font-bold text-sm shadow-xl"
+              onClick={() => router.push("/login")}
+              className="px-6 py-3 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
             >
-              Open Digital Ticket Boarding Pass
+              Masuk Sekarang
             </button>
           </div>
         )}
 
-        {/* Standalone History Tab View */}
-        {activeTab === "history" && (
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="max-w-2xl mx-auto py-2">
+        {/* Ticket Tab View (Logged In) */}
+        {activeTab === "ticket" && isLoggedIn && (
+          <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto">
+            {!activeTicket ? (
+              /* Empty State: Belum Ada Tiket */
+              <div
+                className="w-full max-w-lg p-6 sm:p-8 rounded-3xl border shadow-sm text-center space-y-6 animate-fadeIn"
+                style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+              >
+                <div className="w-16 h-16 rounded-3xl mx-auto flex items-center justify-center bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400 border" style={{ borderColor: "var(--border)" }}>
+                  <Ticket className="w-8 h-8" />
+                </div>
+
+                <div className="space-y-2">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-gray-300">
+                    Belum Ada Tiket Aktif
+                  </span>
+                  <h2 className="text-xl sm:text-2xl font-bold font-display tracking-tight" style={{ color: "var(--foreground)" }}>
+                    Mulai Perjalanan Anda
+                  </h2>
+                  <p className="text-xs max-w-md mx-auto leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
+                    Anda belum membeli tiket perjalanan. Pilih rute keberangkatan di peta dan lakukan pembayaran untuk mendapatkan boarding pass digital QR code.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left text-xs">
+                  <div className="p-3 rounded-2xl border" style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}>
+                    <p className="font-bold">⚡ Scan Cepat</p>
+                    <p className="text-[11px] text-gray-400 mt-1">Tap-in instan dengan QR code di gate stasiun.</p>
+                  </div>
+                  <div className="p-3 rounded-2xl border" style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}>
+                    <p className="font-bold">🛡️ Aman & Resmi</p>
+                    <p className="text-[11px] text-gray-400 mt-1">Terintegrasi armada bus & metro kota.</p>
+                  </div>
+                  <div className="p-3 rounded-2xl border" style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}>
+                    <p className="font-bold">⏱️ Valid 4 Jam</p>
+                    <p className="text-[11px] text-gray-400 mt-1">Fleksibel digunakan sesuai jadwal Anda.</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("map");
+                    setViewMode("search");
+                  }}
+                  className="w-full py-4 px-6 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                >
+                  <Search className="w-4 h-4" />
+                  <span>Cari Rute & Beli Tiket Sekarang</span>
+                </button>
+              </div>
+            ) : (
+              /* Active State: Tiket Aktif & Boarding Pass Siap Digunakan */
+              <div
+                className="w-full max-w-md p-6 sm:p-7 rounded-3xl border shadow-xl space-y-5 animate-fadeIn"
+                style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+              >
+                {/* Active Status Badge */}
+                <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: "var(--border)" }}>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                      Tiket Aktif • Siap Tap-In
+                    </span>
+                  </div>
+                  <span className="font-mono text-xs font-bold text-gray-400">
+                    {activeTicket.id}
+                  </span>
+                </div>
+
+                {/* Route Header */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 rounded-2xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center shadow-sm">
+                    {activeTicket.vehicleType === "train" ? (
+                      <Train className="w-6 h-6" />
+                    ) : (
+                      <Bus className="w-6 h-6" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base tracking-tight" style={{ color: "var(--foreground)" }}>
+                      {activeTicket.routeTitle}
+                    </h3>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {activeTicket.vehicleName} (#{activeTicket.vehicleCode}) • Plat {activeTicket.plateNumber}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Origin -> Destination Box */}
+                <div
+                  className="p-4 rounded-2xl border space-y-3"
+                  style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
+                >
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <div>
+                      <p className="text-[10px] text-gray-400 uppercase">Stasiun Asal</p>
+                      <p className="text-sm font-black mt-0.5" style={{ color: "var(--foreground)" }}>
+                        {activeTicket.originName}
+                      </p>
+                      <p className="text-[11px] text-gray-400">{activeTicket.departureTime}</p>
+                    </div>
+
+                    <ArrowLeft className="w-4 h-4 rotate-180 text-gray-400 mx-2" />
+
+                    <div className="text-right">
+                      <p className="text-[10px] text-gray-400 uppercase">Stasiun Tujuan</p>
+                      <p className="text-sm font-black mt-0.5" style={{ color: "var(--foreground)" }}>
+                        {activeTicket.destName}
+                      </p>
+                      <p className="text-[11px] text-gray-400">{activeTicket.arrivalTime}</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-dashed flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400">
+                    <span>Penumpang: {activeTicket.passengerName} ({activeTicket.passengerCount} Org)</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                      Rp {activeTicket.fare.toLocaleString("id-ID")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="space-y-2.5 pt-1">
+                  <button
+                    onClick={() => setShowTicketModal(true)}
+                    className="w-full py-4 px-4 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                  >
+                    <QrCode className="w-4 h-4" />
+                    <span>Tampilkan QR Boarding Pass</span>
+                  </button>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      onClick={() => {
+                        setSelectedRoute(activeTicket.routeData);
+                        setActiveTab("map");
+                        setViewMode("journey");
+                        setActiveStopIndex(1);
+                        setToastMsg(`Tracking live armada #${activeTicket.vehicleCode}`);
+                      }}
+                      className="py-2.5 px-3 rounded-xl border text-xs font-bold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                      style={{ borderColor: "var(--border)" }}
+                    >
+                      <Play className="w-3.5 h-3.5" />
+                      <span>Live Tracking</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setActiveTab("map");
+                        setViewMode("search");
+                      }}
+                      className="py-2.5 px-3 rounded-xl border text-xs font-bold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                      style={{ borderColor: "var(--border)" }}
+                    >
+                      <span>Beli Tiket Lain</span>
+                    </button>
+                  </div>
+
+                  <div className="pt-2 border-t" style={{ borderColor: "var(--border)" }}>
+                    <button
+                      onClick={() => {
+                        clearTickets();
+                        setToastMsg("Semua tiket demo berhasil dihapus & saldo dipulihkan.");
+                      }}
+                      className="w-full py-2 text-[11px] font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-400 transition cursor-pointer text-center flex items-center justify-center space-x-1"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>Reset / Hapus Tiket Demo (Ulangi Pembelian)</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Protected Auth State for History Tab */}
+        {activeTab === "history" && !isLoggedIn && (
+          <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-8 text-center">
+            <div className="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center mb-4 shadow-sm border border-indigo-100 dark:border-indigo-900/50">
+              <History className="w-8 h-8" />
+            </div>
+            <h2 className="text-xl font-bold font-display tracking-tight mb-2" style={{ color: "var(--foreground)" }}>
+              Riwayat Perjalanan Memerlukan Akun
+            </h2>
+            <p className="text-sm max-w-md mb-6 leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
+              Masuk untuk menyimpan riwayat perjalanan, melihat boarding pass sebelumnya, dan analisis pengeluaran transportasi.
+            </p>
+            <button
+              onClick={() => router.push("/login")}
+              className="px-6 py-3 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
+            >
+              Masuk Sekarang
+            </button>
+          </div>
+        )}
+
+        {/* Standalone History Tab View (Logged In) */}
+        {activeTab === "history" && isLoggedIn && (
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+            <div className="max-w-[1080px] w-full mx-auto py-2 sm:py-3 px-2 sm:px-4 flex-1 min-h-0 flex flex-col overflow-hidden">
               <HistoryView
                 onRebookRoute={(destName) => {
                   setActiveTab("map");
                   setViewMode("search");
                   setToastMsg(`Rebooking trip to ${destName}`);
                 }}
-                onViewTicketModal={() => setShowTicketModal(true)}
+                onViewTicketModal={handleViewTicket}
               />
             </div>
           </div>
@@ -403,18 +718,24 @@ export default function Home() {
       {/* Ticket Modal View */}
       {showTicketModal && (
         <TicketView
-          route={selectedRoute}
+          route={activeTicket ? activeTicket.routeData : selectedRoute}
           onClose={() => setShowTicketModal(false)}
         />
       )}
 
+      {/* Auth Prompt Modal when selecting route as guest */}
+      <AuthPromptModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        pendingRoute={pendingRoute}
+        onQuickLogin={handleQuickLogin}
+        onGoToLogin={handleGoToLogin}
+      />
+
       {/* Mobile Bottom Navigation */}
       <BottomNavigation
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          if (tab === "ticket") setShowTicketModal(true);
-        }}
+        onTabChange={handleTabChange}
       />
     </div>
   );
