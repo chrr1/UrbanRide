@@ -1,15 +1,28 @@
 "use client";
 
-import { ArrowLeft, Clock, Bus, Train, Footprints, ShieldCheck, Phone, MessageSquare, Play } from "lucide-react";
+import { ArrowLeft, Clock, Bus, Train, Footprints, ShieldCheck, Phone, MessageSquare, Play, Ticket, CheckCircle2, QrCode } from "lucide-react";
 import { RouteOption } from "@/data/mockData";
+import { PurchasedTicket } from "@/context/TicketContext";
 
 interface RouteDetailPanelProps {
   route: RouteOption;
   onBack: () => void;
   onStartJourney: (route: RouteOption) => void;
+  onBuyTicket?: (route: RouteOption) => void;
+  hasActiveTicket?: boolean;
+  activeTicket?: PurchasedTicket | null;
+  onViewTicket?: () => void;
 }
 
-export default function RouteDetailPanel({ route, onBack, onStartJourney }: RouteDetailPanelProps) {
+export default function RouteDetailPanel({
+  route,
+  onBack,
+  onStartJourney,
+  onBuyTicket,
+  hasActiveTicket = false,
+  activeTicket = null,
+  onViewTicket,
+}: RouteDetailPanelProps) {
   const formattedFare = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -166,19 +179,91 @@ export default function RouteDetailPanel({ route, onBack, onStartJourney }: Rout
         </div>
       </div>
 
-      {/* CTA */}
-      <button
-        onClick={() => onStartJourney(route)}
-        className="w-full py-4 px-4 text-sm font-bold rounded-full transition-all hover:scale-[1.02] flex items-center justify-center space-x-2 shadow-xl border backdrop-blur-md"
-        style={{
-          background: "var(--foreground)",
-          color: "var(--background)",
-          borderColor: "rgba(255,255,255,0.1)"
-        }}
-      >
-        <Play className="w-5 h-5" style={{ fill: "var(--background)" }} />
-        <span>Start Live Journey</span>
-      </button>
+      {/* CTAs */}
+      {hasActiveTicket && activeTicket ? (
+        <div className="space-y-3 pt-2">
+          {/* Active Ticket Banner */}
+          <div
+            className="p-3.5 rounded-2xl border flex items-center justify-between"
+            style={{
+              background: "rgba(16, 185, 129, 0.08)",
+              borderColor: "rgba(16, 185, 129, 0.25)",
+            }}
+          >
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                    Tiket Aktif Ditemukan
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+                <p className="text-[11px] font-mono text-gray-500 dark:text-gray-400">
+                  {activeTicket.id} • {activeTicket.passengerCount} Penumpang
+                </p>
+              </div>
+            </div>
+
+            {onViewTicket && (
+              <button
+                onClick={onViewTicket}
+                className="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] shadow-sm hover:opacity-90 transition flex items-center space-x-1 cursor-pointer"
+              >
+                <QrCode className="w-3 h-3" />
+                <span>QR Pass</span>
+              </button>
+            )}
+          </div>
+
+          {/* Primary Action: Mulai Perjalanan (Sudah Punya Tiket!) */}
+          <button
+            onClick={() => onStartJourney(route)}
+            className="w-full py-4 px-4 text-sm font-bold rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 shadow-xl border backdrop-blur-md cursor-pointer"
+            style={{
+              background: "var(--foreground)",
+              color: "var(--background)",
+              borderColor: "rgba(255,255,255,0.1)",
+            }}
+          >
+            <Play className="w-5 h-5 fill-current" />
+            <span>Mulai Perjalanan (Live Tracking)</span>
+          </button>
+
+          {onViewTicket && (
+            <button
+              onClick={onViewTicket}
+              className="w-full py-2.5 px-4 text-xs font-semibold rounded-xl transition-all hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center space-x-1.5 cursor-pointer"
+              style={{ color: "var(--foreground)" }}
+            >
+              <Ticket className="w-3.5 h-3.5" />
+              <span>Buka Boarding Pass Lengkap</span>
+            </button>
+          )}
+        </div>
+      ) : (
+        /* Belum Beli Tiket */
+        <div className="space-y-2 pt-2">
+          <button
+            onClick={() => onBuyTicket && onBuyTicket(route)}
+            className="w-full py-4 px-4 text-sm font-bold rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 shadow-xl border backdrop-blur-md cursor-pointer"
+            style={{
+              background: "var(--foreground)",
+              color: "var(--background)",
+              borderColor: "rgba(255,255,255,0.1)",
+            }}
+          >
+            <Ticket className="w-5 h-5" />
+            <span>Beli Tiket Perjalanan • {formattedFare}</span>
+          </button>
+
+          <p className="text-[11px] text-center text-gray-400 font-medium">
+            Beli tiket untuk mengaktifkan live tracking & boarding pass QR code
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -9,7 +9,11 @@ interface RouteCardProps {
   onSelect: (route: RouteOption) => void;
 }
 
-export default function RouteCard({ route, isSelected = false, onSelect }: RouteCardProps) {
+export default function RouteCard({
+  route,
+  isSelected = false,
+  onSelect,
+}: RouteCardProps) {
   const getBadgeStyle = (badge: RouteOption["badge"]) => {
     switch (badge) {
       case "FASTEST":
