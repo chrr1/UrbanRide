@@ -14,21 +14,36 @@ export function SkeletonLoader() {
   );
 }
 
-export function EmptyState({ onReset }: { onReset: () => void }) {
+export function EmptyState({
+  title = "No routes found",
+  message = "We couldn't find a route matching your criteria. Try changing destination or clearing filters.",
+  buttonText = "Reset Filter / Cari Ulang",
+  onReset,
+}: {
+  title?: string;
+  message?: string;
+  buttonText?: string;
+  onReset: () => void;
+}) {
   return (
-    <div className="floating-card p-6 w-full bg-white text-center space-y-3">
-      <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+    <div
+      className="p-6 w-full rounded-2xl text-center space-y-3 border"
+      style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+    >
+      <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40 flex items-center justify-center mx-auto">
         <MapPinOff className="w-6 h-6" />
       </div>
-      <h3 className="text-base font-bold text-gray-900">No routes found</h3>
-      <p className="text-xs text-gray-500 max-w-xs mx-auto">
-        We couldn't find a direct route between these locations. Try selecting a different destination or station.
+      <h3 className="text-base font-bold font-display" style={{ color: "var(--foreground)" }}>
+        {title}
+      </h3>
+      <p className="text-xs max-w-xs mx-auto leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
+        {message}
       </p>
       <button
         onClick={onReset}
-        className="py-2.5 px-4 bg-black text-white text-xs font-bold rounded-full shadow-md hover:bg-gray-800 transition"
+        className="py-2.5 px-4 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-xl shadow-md hover:opacity-90 active:scale-95 transition cursor-pointer"
       >
-        Change Destination
+        {buttonText}
       </button>
     </div>
   );
@@ -36,17 +51,22 @@ export function EmptyState({ onReset }: { onReset: () => void }) {
 
 export function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="floating-card p-6 w-full bg-white text-center space-y-3">
-      <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto">
+    <div
+      className="p-6 w-full rounded-2xl text-center space-y-3 border"
+      style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+    >
+      <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/40 flex items-center justify-center mx-auto">
         <AlertTriangle className="w-6 h-6" />
       </div>
-      <h3 className="text-base font-bold text-gray-900">Something went wrong</h3>
-      <p className="text-xs text-gray-500 max-w-xs mx-auto">
+      <h3 className="text-base font-bold font-display" style={{ color: "var(--foreground)" }}>
+        Something went wrong
+      </h3>
+      <p className="text-xs max-w-xs mx-auto leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
         We couldn't load the transit route updates. Please check your connection.
       </p>
       <button
         onClick={onRetry}
-        className="py-2.5 px-4 bg-black text-white text-xs font-bold rounded-full shadow-md hover:bg-gray-800 transition inline-flex items-center space-x-1.5"
+        className="py-2.5 px-4 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-xl shadow-md hover:opacity-90 transition inline-flex items-center space-x-1.5 cursor-pointer"
       >
         <RefreshCw className="w-3.5 h-3.5" />
         <span>Try Again</span>

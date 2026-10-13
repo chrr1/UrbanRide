@@ -18,6 +18,7 @@ import { Bus, Train, MapPin, Sparkles, Navigation, Layers, X, Search, ArrowLeft,
 import { useAuth } from "@/context/AuthContext";
 import { useTicket } from "@/context/TicketContext";
 import AuthPromptModal from "@/components/auth/AuthPromptModal";
+import TripCompletedModal from "@/components/journey/TripCompletedModal";
 
 // Dynamic Import MapView with SSR disabled for Leaflet compatibility
 const MapView = dynamic(() => import("@/components/map/MapView"), {
@@ -33,7 +34,7 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
 export default function Home() {
   const router = useRouter();
   const { isLoggedIn, login } = useAuth();
-  const { activeTicket, hasActiveTicketForRoute, getActiveTicketForRoute, clearTickets } = useTicket();
+  const { activeTicket, hasActiveTicketForRoute, getActiveTicketForRoute, clearTickets, markTicketUsed, addTripToHistory } = useTicket();
 
   const [activeTab, setActiveTab] = useState<"map" | "ticket" | "history">("map");
   const [viewMode, setViewMode] = useState<"search" | "results" | "detail" | "journey">("search");
@@ -44,6 +45,8 @@ export default function Home() {
   const [activeStopIndex, setActiveStopIndex] = useState<number>(1);
 
   const [showTicketModal, setShowTicketModal] = useState<boolean>(false);
+  const [showCompletedModal, setShowCompletedModal] = useState<boolean>(false);
+  const [completedRoute, setCompletedRoute] = useState<RouteOption | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
 
@@ -104,10 +107,6 @@ export default function Home() {
   }, [isLoggedIn]);
 
   const handleTabChange = (tab: "map" | "ticket" | "history") => {
-    if ((tab === "ticket" || tab === "history") && !isLoggedIn) {
-      router.push("/login");
-      return;
-    }
     setActiveTab(tab);
     if (tab === "map" && viewMode === "results") setViewMode("search");
   };
@@ -175,9 +174,33 @@ export default function Home() {
 
   // Handle End Journey
   const handleEndJourney = () => {
+    // 1. Mark ticket as used if active ticket exists
+    const currentTicket = getActiveTicketForRoute(selectedRoute.id) || activeTicket;
+    if (currentTicket) {
+      markTicketUsed(currentTicket.id);
+    }
+
+    // 2. Add completed trip to user history
+    const now = new Date();
+    addTripToHistory({
+      id: `hist-${Date.now()}`,
+      destination: destination.name,
+      origin: origin.name,
+      routeName: selectedRoute.title,
+      date: "Hari ini, " + now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+      durationMinutes: selectedRoute.totalDurationMinutes,
+      fare: selectedRoute.fare,
+      transportType: selectedRoute.vehicle.type,
+      ticketCode: currentTicket ? currentTicket.id : `UBR-${selectedRoute.id.slice(0, 6).toUpperCase()}`,
+      status: "COMPLETED",
+    });
+
+    // 3. Trigger arrival completion modal
+    setCompletedRoute(selectedRoute);
+    setShowCompletedModal(true);
     setViewMode("search");
-    setActiveTab("map");
-    setToastMsg("Journey ended safely.");
+    setActiveStopIndex(0);
+    setToastMsg(`Perjalanan selesai! Selamat tiba di ${destination.name}`);
   };
 
   return (
@@ -256,8 +279,8 @@ export default function Home() {
                   onBack={() => setViewMode("results")}
                   onStartJourney={handleStartJourney}
                   onBuyTicket={handleBuyTicket}
-                  hasActiveTicket={hasActiveTicketForRoute(selectedRoute.id)}
-                  activeTicket={getActiveTicketForRoute(selectedRoute.id)}
+                  hasActiveTicket={Boolean(isLoggedIn && hasActiveTicketForRoute(selectedRoute.id))}
+                  activeTicket={isLoggedIn ? getActiveTicketForRoute(selectedRoute.id) : undefined}
                   onViewTicket={handleViewTicket}
                 />
               )}
@@ -454,8 +477,8 @@ export default function Home() {
                     onBack={() => setViewMode("results")}
                     onStartJourney={handleStartJourney}
                     onBuyTicket={handleBuyTicket}
-                    hasActiveTicket={hasActiveTicketForRoute(selectedRoute.id)}
-                    activeTicket={getActiveTicketForRoute(selectedRoute.id)}
+                    hasActiveTicket={Boolean(isLoggedIn && hasActiveTicketForRoute(selectedRoute.id))}
+                    activeTicket={isLoggedIn ? getActiveTicketForRoute(selectedRoute.id) : undefined}
                     onViewTicket={handleViewTicket}
                   />
                 )}
@@ -490,7 +513,10 @@ export default function Home() {
               Masuk untuk melihat tiket perjalanan aktif, QR code check-in, dan rincian transit Anda.
             </p>
             <button
-              onClick={() => router.push("/login")}
+              onClick={() => {
+                sessionStorage.setItem("urbanride-active-tab", "ticket");
+                router.push("/login");
+              }}
               className="px-6 py-3 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
             >
               Masuk Sekarang
@@ -689,7 +715,10 @@ export default function Home() {
               Masuk untuk menyimpan riwayat perjalanan, melihat boarding pass sebelumnya, dan analisis pengeluaran transportasi.
             </p>
             <button
-              onClick={() => router.push("/login")}
+              onClick={() => {
+                sessionStorage.setItem("urbanride-active-tab", "history");
+                router.push("/login");
+              }}
               className="px-6 py-3 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
             >
               Masuk Sekarang
@@ -730,6 +759,17 @@ export default function Home() {
         pendingRoute={pendingRoute}
         onQuickLogin={handleQuickLogin}
         onGoToLogin={handleGoToLogin}
+      />
+
+      {/* Trip Completed Celebration & Arrival Modal */}
+      <TripCompletedModal
+        isOpen={showCompletedModal}
+        route={completedRoute || selectedRoute}
+        onClose={() => setShowCompletedModal(false)}
+        onViewHistory={() => {
+          setShowCompletedModal(false);
+          setActiveTab("history");
+        }}
       />
 
       {/* Mobile Bottom Navigation */}

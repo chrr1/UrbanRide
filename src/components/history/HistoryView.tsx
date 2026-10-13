@@ -17,6 +17,7 @@ import {
   Compass,
 } from "lucide-react";
 import { MOCK_HISTORY, TripHistoryItem } from "@/data/mockData";
+import { useTicket } from "@/context/TicketContext";
 
 interface HistoryViewProps {
   onRebookRoute?: (routeName: string) => void;
@@ -41,17 +42,23 @@ const TRIP_TIMES: Record<string, { dep: string; arr: string; platform: string }>
 };
 
 export default function HistoryView({ onRebookRoute, onViewTicketModal }: HistoryViewProps) {
+  const { history: contextHistory } = useTicket();
+  // Use contextHistory directly — TicketContext already handles per-user scoping and
+  // initializes to MOCK_HISTORY when user first logs in (no history yet).
+  // We do NOT fall back to MOCK_HISTORY here to avoid cross-account leakage.
+  const allHistory = contextHistory ?? [];
+
   const [activeFilter, setActiveFilter] = useState<"all" | "bus" | "train">("all");
 
-  const filteredHistory = MOCK_HISTORY.filter((item) => {
+  const filteredHistory = allHistory.filter((item) => {
     if (activeFilter === "all") return true;
     return item.transportType === activeFilter;
   });
 
-  const totalSpent = MOCK_HISTORY.reduce((acc, curr) => acc + curr.fare, 0);
-  const activeCount = MOCK_HISTORY.filter((h) => h.status === "VALID").length;
-  const busCount = MOCK_HISTORY.filter((h) => h.transportType === "bus").length;
-  const trainCount = MOCK_HISTORY.filter((h) => h.transportType === "train").length;
+  const totalSpent = allHistory.reduce((acc, curr) => acc + curr.fare, 0);
+  const activeCount = allHistory.filter((h) => h.status === "VALID").length;
+  const busCount = allHistory.filter((h) => h.transportType === "bus").length;
+  const trainCount = allHistory.filter((h) => h.transportType === "train").length;
 
   return (
     <div className="w-full flex-1 min-h-0 flex flex-col overflow-hidden">
