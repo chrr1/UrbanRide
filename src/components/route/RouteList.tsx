@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { RouteOption } from "@/data/mockData";
+import { EmptyState } from "@/components/feedback/FeedbackStates";
 import RouteCard from "./RouteCard";
 
 interface RouteListProps {
@@ -82,16 +83,25 @@ export default function RouteList({
         ))}
       </div>
 
-      {/* Route Cards */}
+      {/* Route Cards or Empty State */}
       <div className="space-y-3.5 pt-1 pb-2">
-        {filteredRoutes.map((route) => (
-          <RouteCard
-            key={route.id}
-            route={route}
-            isSelected={route.id === selectedRouteId}
-            onSelect={onSelectRoute}
+        {filteredRoutes.length > 0 ? (
+          filteredRoutes.map((route) => (
+            <RouteCard
+              key={route.id}
+              route={route}
+              isSelected={route.id === selectedRouteId}
+              onSelect={onSelectRoute}
+            />
+          ))
+        ) : (
+          <EmptyState
+            title="Tidak ada rute ditemukan"
+            message={`Tidak ada opsi rute dengan filter "${activeSort}". Coba ganti filter atau pilih All Routes.`}
+            buttonText="Tampilkan Semua Rute"
+            onReset={() => setActiveSort("ALL")}
           />
-        ))}
+        )}
       </div>
     </div>
   );
