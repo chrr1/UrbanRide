@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Search, MapPin, ArrowUpDown, Clock, SlidersHorizontal, Sparkles, GraduationCap, ShoppingBag, Building2, TrainFront, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, MapPin, Navigation, ArrowUpDown, Clock, SlidersHorizontal, Sparkles, GraduationCap, ShoppingBag, Building2, TrainFront, X } from "lucide-react";
 import { LocationItem, LOCATIONS } from "@/data/mockData";
 
 interface SearchPanelProps {
@@ -20,42 +20,106 @@ export default function SearchPanel({
   const [fromLocation, setFromLocation] = useState<LocationItem>(
     selectedFrom || LOCATIONS[0]
   );
+  const [fromSearchInput, setFromSearchInput] = useState(
+    selectedFrom?.name || LOCATIONS[0].name
+  );
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+
   const [toLocation, setToLocation] = useState<LocationItem | null>(
     selectedTo || LOCATIONS[2]
   );
-
   const [toSearchInput, setToSearchInput] = useState(toLocation?.name || "");
   const [showToDropdown, setShowToDropdown] = useState(false);
+
   const [preference, setPreference] = useState("Recommended");
   const [departureTime, setDepartureTime] = useState("Now");
+
+  // Sync external prop updates
+  useEffect(() => {
+    if (selectedFrom) {
+      setFromLocation(selectedFrom);
+      setFromSearchInput(selectedFrom.name);
+    }
+  }, [selectedFrom]);
+
+  useEffect(() => {
+    if (selectedTo) {
+      setToLocation(selectedTo);
+      setToSearchInput(selectedTo.name);
+    }
+  }, [selectedTo]);
+
+  const filteredFromLocations = LOCATIONS.filter(
+    (loc) =>
+      loc.name.toLowerCase().includes(fromSearchInput.toLowerCase()) ||
+      loc.category.toLowerCase().includes(fromSearchInput.toLowerCase()) ||
+      loc.address.toLowerCase().includes(fromSearchInput.toLowerCase())
+  );
 
   const filteredLocations = LOCATIONS.filter(
     (loc) =>
       loc.name.toLowerCase().includes(toSearchInput.toLowerCase()) ||
-      loc.category.toLowerCase().includes(toSearchInput.toLowerCase())
+      loc.category.toLowerCase().includes(toSearchInput.toLowerCase()) ||
+      loc.address.toLowerCase().includes(toSearchInput.toLowerCase())
   );
 
   const handleSwap = () => {
     if (toLocation) {
-      const temp = fromLocation;
-      setFromLocation(toLocation);
-      setToLocation(temp);
-      setToSearchInput(temp.name);
+      const prevFrom = fromLocation;
+      const prevFromInput = fromSearchInput;
+      const prevTo = toLocation;
+      const prevToInput = toSearchInput;
+
+      setFromLocation(prevTo);
+      setFromSearchInput(prevTo.name);
+
+      setToLocation(prevFrom);
+      setToSearchInput(prevFrom.name);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (toLocation) {
-      onSearch(fromLocation, toLocation, preference);
+    if (!toLocation) return;
+
+    // Resolve fromLocation if typed without clicking item
+    let actualFrom = fromLocation;
+    if (fromSearchInput && (!actualFrom || actualFrom.name.toLowerCase() !== fromSearchInput.toLowerCase())) {
+      const matched = LOCATIONS.find(
+        (loc) => loc.name.toLowerCase() === fromSearchInput.toLowerCase()
+      );
+      if (matched) actualFrom = matched;
+    }
+
+    let actualTo = toLocation;
+    if (toSearchInput && (!actualTo || actualTo.name.toLowerCase() !== toSearchInput.toLowerCase())) {
+      const matched = LOCATIONS.find(
+        (loc) => loc.name.toLowerCase() === toSearchInput.toLowerCase()
+      );
+      if (matched) actualTo = matched;
+    }
+
+    if (actualFrom && actualTo) {
+      onSearch(actualFrom, actualTo, preference);
     }
   };
 
   return (
     <div
-      className="rounded-2xl p-4 sm:p-4.5 w-full border"
+      className="relative rounded-2xl p-4 sm:p-4.5 w-full border"
       style={{ background: "var(--surface)", borderColor: "var(--border)" }}
     >
+      {/* Click-outside backdrop for dropdowns */}
+      {(showFromDropdown || showToDropdown) && (
+        <div
+          className="fixed inset-0 z-20"
+          onClick={() => {
+            setShowFromDropdown(false);
+            setShowToDropdown(false);
+          }}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div>
@@ -69,34 +133,174 @@ export default function SearchPanel({
             Find the best routes & live transit options
           </p>
         </div>
-
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3">
-        {/* From Input */}
-        <div className="relative">
-          <label
-            className="block text-[11px] font-bold uppercase tracking-wider mb-1"
-            style={{ color: "var(--foreground-muted)" }}
-          >
-            From
-          </label>
+        {/* From Input & Dropdown */}
+        <div className={`relative ${showFromDropdown ? "z-40" : "z-20"}`}>
+          <div className="flex items-center justify-between mb-1">
+            <label
+              className="block text-[11px] font-bold uppercase tracking-wider"
+              style={{ color: "var(--foreground-muted)" }}
+            >
+              From (Titik Awal)
+            </label>
+            {fromLocation.id !== LOCATIONS[0].id && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFromLocation(LOCATIONS[0]);
+                  setFromSearchInput(LOCATIONS[0].name);
+                  setShowFromDropdown(false);
+                }}
+                className="text-[11px] font-medium transition hover:underline flex items-center space-x-1"
+                style={{ color: "var(--foreground-muted)" }}
+              >
+                <Navigation className="w-3 h-3" />
+                <span>Gunakan Lokasi Saat Ini</span>
+              </button>
+            )}
+          </div>
           <div
-            className="flex items-center space-x-2.5 p-2.5 sm:p-3 rounded-xl border"
-            style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
+            className="flex items-center space-x-2.5 p-2.5 sm:p-3 rounded-xl border transition"
+            style={{ background: "var(--surface)", borderColor: "var(--border)" }}
           >
-            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: "var(--accent-cyber-lime)", boxShadow: "0 0 6px var(--accent-cyber-lime)" }} />
+            <Navigation className="w-4 h-4 flex-shrink-0" style={{ color: "var(--foreground)" }} />
             <input
               type="text"
-              readOnly
-              value={fromLocation.name}
-              className="w-full bg-transparent text-sm font-medium outline-hidden cursor-default"
+              placeholder="Cari titik keberangkatan..."
+              value={fromSearchInput}
+              onChange={(e) => {
+                setFromSearchInput(e.target.value);
+                setShowFromDropdown(true);
+              }}
+              onFocus={() => {
+                setShowFromDropdown(true);
+                setShowToDropdown(false);
+              }}
+              className="w-full bg-transparent text-sm font-medium outline-hidden"
               style={{ color: "var(--foreground)" }}
             />
-            <span className="px-2 py-0.5 rounded-md text-[11px] font-bold border" style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)", borderColor: "var(--border)" }}>
-              Current
-            </span>
+            {fromLocation.id === LOCATIONS[0].id && !showFromDropdown && (
+              <span
+                className="px-2 py-0.5 rounded text-[11px] font-semibold border shrink-0"
+                style={{
+                  background: "var(--surface-secondary)",
+                  color: "var(--foreground-muted)",
+                  borderColor: "var(--border)",
+                }}
+              >
+                Current
+              </span>
+            )}
+            {fromSearchInput && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFromSearchInput("");
+                  setShowFromDropdown(true);
+                }}
+                className="p-0.5 hover:opacity-80 transition"
+                style={{ color: "var(--foreground-muted)" }}
+                title="Hapus teks"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
+
+          {/* Autocomplete Dropdown for Origin */}
+          {showFromDropdown && (
+            <div
+              className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl max-h-60 overflow-y-auto p-1.5 border"
+              style={{
+                background: "var(--surface)",
+                borderColor: "var(--border)",
+                boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
+              }}
+            >
+              {/* Reset to Current Location shortcut */}
+              <div
+                onClick={() => {
+                  setFromLocation(LOCATIONS[0]);
+                  setFromSearchInput(LOCATIONS[0].name);
+                  setShowFromDropdown(false);
+                }}
+                className="p-2.5 rounded-lg cursor-pointer transition flex items-center justify-between border-b mb-1"
+                style={{ color: "var(--foreground)", borderColor: "var(--border)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-secondary)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className="p-2 rounded-lg"
+                    style={{ background: "var(--surface-secondary)" }}
+                  >
+                    <Navigation className="w-4 h-4" style={{ color: "var(--foreground)" }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+                      Lokasi Saat Ini
+                    </p>
+                    <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
+                      {LOCATIONS[0].name}
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className="text-[11px] font-semibold px-2 py-0.5 rounded border"
+                  style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)", borderColor: "var(--border)" }}
+                >
+                  GPS
+                </span>
+              </div>
+
+              {filteredFromLocations
+                .filter((loc) => loc.id !== LOCATIONS[0].id)
+                .map((loc) => (
+                  <div
+                    key={loc.id}
+                    onClick={() => {
+                      setFromLocation(loc);
+                      setFromSearchInput(loc.name);
+                      setShowFromDropdown(false);
+                    }}
+                    className="p-2.5 rounded-lg cursor-pointer transition flex items-center justify-between"
+                    style={{ color: "var(--foreground)" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-secondary)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className="p-2 rounded-lg"
+                        style={{ background: "var(--surface-secondary)" }}
+                      >
+                        <MapPin className="w-4 h-4" style={{ color: "var(--foreground-muted)" }} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+                          {loc.name}
+                        </p>
+                        <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
+                          {loc.address}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className="text-xs font-medium uppercase px-2 py-0.5 rounded border"
+                      style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)", borderColor: "var(--border)" }}
+                    >
+                      {loc.category}
+                    </span>
+                  </div>
+                ))}
+              {filteredFromLocations.filter((loc) => loc.id !== LOCATIONS[0].id).length === 0 && (
+                <div className="p-3 text-center text-xs" style={{ color: "var(--foreground-muted)" }}>
+                  Tidak ada lokasi yang cocok
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Swap Button */}
@@ -117,7 +321,7 @@ export default function SearchPanel({
         </div>
 
         {/* Destination Input & Autocomplete */}
-        <div className="relative">
+        <div className={`relative ${showToDropdown ? "z-40" : "z-20"}`}>
           <label
             className="block text-[11px] font-bold uppercase tracking-wider mb-1"
             style={{ color: "var(--foreground-muted)" }}
@@ -137,7 +341,10 @@ export default function SearchPanel({
                 setToSearchInput(e.target.value);
                 setShowToDropdown(true);
               }}
-              onFocus={() => setShowToDropdown(true)}
+              onFocus={() => {
+                setShowToDropdown(true);
+                setShowFromDropdown(false);
+              }}
               className="w-full bg-transparent text-sm font-medium outline-hidden"
               style={{
                 color: "var(--foreground)",
@@ -160,8 +367,12 @@ export default function SearchPanel({
           {/* Autocomplete Dropdown */}
           {showToDropdown && filteredLocations.length > 0 && (
             <div
-              className="absolute left-0 right-0 top-full mt-1.5 z-30 rounded-xl shadow-xl max-h-60 overflow-y-auto p-2 border"
-              style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+              className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl max-h-60 overflow-y-auto p-2 border"
+              style={{
+                background: "var(--surface)",
+                borderColor: "var(--border)",
+                boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
+              }}
             >
               {filteredLocations.map((loc) => (
                 <div
@@ -307,7 +518,8 @@ export default function SearchPanel({
         <button
           type="submit"
           disabled={!toLocation || isLoading}
-          className="w-full mt-2 py-2.5 sm:py-3 px-4 bg-black text-white text-sm font-bold rounded-full shadow-lg hover:bg-gray-800 active:scale-[0.99] transition disabled:opacity-50 flex items-center justify-center space-x-2"
+          className="w-full mt-2 py-2.5 sm:py-3 px-4 text-sm font-bold rounded-full shadow-lg active:scale-[0.99] transition disabled:opacity-50 flex items-center justify-center space-x-2"
+          style={{ background: "var(--foreground)", color: "var(--background)" }}
         >
           {isLoading ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

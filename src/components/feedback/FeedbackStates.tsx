@@ -5,11 +5,14 @@ import { AlertTriangle, MapPinOff, RefreshCw, CheckCircle2, X } from "lucide-rea
 
 export function SkeletonLoader() {
   return (
-    <div className="floating-card p-5 w-full bg-white space-y-4 animate-pulse">
-      <div className="h-4 bg-gray-200 rounded-full w-1/3" />
-      <div className="h-10 bg-gray-200 rounded-2xl w-full" />
-      <div className="h-10 bg-gray-200 rounded-2xl w-full" />
-      <div className="h-12 bg-gray-300 rounded-full w-full mt-4" />
+    <div
+      className="floating-card p-5 w-full space-y-4 animate-pulse"
+      style={{ background: "var(--surface)" }}
+    >
+      <div className="h-4 rounded-full w-1/3" style={{ background: "var(--surface-secondary)" }} />
+      <div className="h-10 rounded-2xl w-full" style={{ background: "var(--surface-secondary)" }} />
+      <div className="h-10 rounded-2xl w-full" style={{ background: "var(--surface-secondary)" }} />
+      <div className="h-12 rounded-full w-full mt-4" style={{ background: "var(--border)" }} />
     </div>
   );
 }

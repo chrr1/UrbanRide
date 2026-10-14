@@ -347,15 +347,8 @@ export default function Home() {
                       <Bus className="w-4 h-4" style={{ color: "var(--foreground)" }} />
                       <span>{selectedRoute.vehicle.name}</span>
                     </span>
-                    <span
-                      className="px-2 py-0.5 rounded-full text-[10px] font-bold shadow-inner border tracking-wider uppercase"
-                      style={{
-                        background: "var(--surface-secondary)",
-                        color: "var(--foreground)",
-                        borderColor: "var(--border)"
-                      }}
-                    >
-                      ● ON ROUTE
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                      On Route
                     </span>
                   </div>
 
@@ -504,7 +497,7 @@ export default function Home() {
         {activeTab === "ticket" && !isLoggedIn && (
           <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-8 text-center">
             <div className="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center mb-4 shadow-sm border border-indigo-100 dark:border-indigo-900/50">
-              <Ticket className="w-8 h-8" />
+              <Ticket className="w-8 h-8 text-black" />
             </div>
             <h2 className="text-xl font-bold font-display tracking-tight mb-2" style={{ color: "var(--foreground)" }}>
               Tiket Boarding Pass Memerlukan Akun
@@ -583,12 +576,9 @@ export default function Home() {
               >
                 {/* Active Status Badge */}
                 <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: "var(--border)" }}>
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                      Tiket Aktif • Siap Tap-In
-                    </span>
-                  </div>
+                  <span className="text-xs font-bold" style={{ color: "var(--foreground)" }}>
+                    Tiket Aktif
+                  </span>
                   <span className="font-mono text-xs font-bold text-gray-400">
                     {activeTicket.id}
                   </span>
@@ -706,7 +696,7 @@ export default function Home() {
         {activeTab === "history" && !isLoggedIn && (
           <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-8 text-center">
             <div className="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center mb-4 shadow-sm border border-indigo-100 dark:border-indigo-900/50">
-              <History className="w-8 h-8" />
+              <History className="w-8 h-8 text-black" />
             </div>
             <h2 className="text-xl font-bold font-display tracking-tight mb-2" style={{ color: "var(--foreground)" }}>
               Riwayat Perjalanan Memerlukan Akun

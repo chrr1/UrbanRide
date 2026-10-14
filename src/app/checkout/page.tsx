@@ -71,25 +71,31 @@ function CheckoutContent() {
     };
 
     return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 bg-gray-50/70 dark:bg-black">
+      <div
+        className="min-h-screen w-full flex flex-col items-center justify-center p-4 transition-colors"
+        style={{ background: "var(--background)" }}
+      >
         <div
           className="w-full max-w-md p-8 rounded-3xl border shadow-xl text-center space-y-6"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}
         >
-          <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600">
+          <div
+            className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center border"
+            style={{ background: "var(--surface-secondary)", borderColor: "var(--border)", color: "var(--foreground)" }}
+          >
             <Lock className="w-8 h-8" />
           </div>
 
           <div className="space-y-2">
-            <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40">
+            <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
               Autentikasi Diperlukan
             </span>
-            <h2 className="text-2xl font-bold font-display tracking-tight text-gray-900 dark:text-white">
+            <h2 className="text-2xl font-bold font-display tracking-tight" style={{ color: "var(--foreground)" }}>
               Masuk untuk Membeli Tiket
             </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+            <p className="text-xs leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
               Tiket boarding pass UrbanRide diterbitkan resmi atas nama Anda. Silakan masuk ke akun terlebih dahulu untuk melanjutkan pembayaran rute{" "}
-              <strong className="text-gray-900 dark:text-white font-semibold">
+              <strong className="font-semibold" style={{ color: "var(--foreground)" }}>
                 #{selectedRoute.vehicle.code} ({selectedRoute.title})
               </strong>.
             </p>
@@ -100,7 +106,7 @@ function CheckoutContent() {
             className="p-3.5 rounded-2xl border text-left flex items-center space-x-3 text-xs"
             style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
           >
-            <div className="w-10 h-10 rounded-xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center shrink-0 shadow-xs">
               {selectedRoute.vehicle.type === "train" ? (
                 <Train className="w-5 h-5" />
               ) : (
@@ -108,11 +114,11 @@ function CheckoutContent() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-gray-900 dark:text-white truncate">
+              <p className="font-bold truncate" style={{ color: "var(--foreground)" }}>
                 {selectedRoute.legs[0]?.fromName || "Stasiun Asal"} →{" "}
                 {selectedRoute.stops[selectedRoute.stops.length - 1]?.name || "Stasiun Tujuan"}
               </p>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+              <p className="text-[11px] mt-0.5" style={{ color: "var(--foreground-muted)" }}>
                 Tarif: Rp {selectedRoute.fare.toLocaleString("id-ID")} • {selectedRoute.totalDurationMinutes} min
               </p>
             </div>
@@ -129,7 +135,8 @@ function CheckoutContent() {
 
             <button
               onClick={() => router.push("/")}
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold hover:opacity-80 transition cursor-pointer"
+              style={{ color: "var(--foreground-muted)" }}
             >
               Kembali ke Pencarian Rute
             </button>
@@ -200,7 +207,8 @@ function CheckoutContent() {
             sessionStorage.setItem("urbanride-view-route", selectedRoute.id);
             router.push("/");
           }}
-          className="flex items-center space-x-2 text-xs font-bold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition cursor-pointer"
+          className="flex items-center space-x-2 text-xs font-bold transition cursor-pointer hover:opacity-80"
+          style={{ color: "var(--foreground-muted)" }}
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Detail Rute</span>
@@ -215,7 +223,7 @@ function CheckoutContent() {
           </span>
         </div>
 
-        <div className="text-xs font-semibold text-gray-400 hidden sm:flex items-center space-x-1.5">
+        <div className="text-xs font-semibold hidden sm:flex items-center space-x-1.5" style={{ color: "var(--foreground-muted)" }}>
           <Lock className="w-3.5 h-3.5 text-emerald-500" />
           <span>Transaksi Terenkripsi</span>
         </div>
@@ -250,14 +258,21 @@ function CheckoutContent() {
                           #{selectedRoute.vehicle.code}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      <p className="text-xs mt-0.5" style={{ color: "var(--foreground-muted)" }}>
                         {selectedRoute.vehicle.name} • Plat {selectedRoute.vehicle.plateNumber}
                       </p>
                     </div>
                   </div>
 
-                  <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40">
-                    ● {selectedRoute.vehicle.statusText}
+                  <span
+                    className="text-xs font-bold"
+                    style={{
+                      color: selectedRoute.vehicle.statusText.toLowerCase().includes("delayed")
+                        ? "#d97706"
+                        : "#059669",
+                    }}
+                  >
+                    {selectedRoute.vehicle.statusText}
                   </span>
                 </div>
 
@@ -269,7 +284,7 @@ function CheckoutContent() {
                   <div className="flex items-start space-x-3">
                     <div className="flex flex-col items-center mt-1">
                       <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" />
-                      <div className="w-0.5 h-8 bg-gray-300 dark:bg-gray-700 my-1" />
+                      <div className="w-0.5 h-8 my-1" style={{ background: "var(--border)" }} />
                       <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 ring-4 ring-indigo-500/20" />
                     </div>
 
@@ -277,11 +292,11 @@ function CheckoutContent() {
                       <div>
                         <div className="flex items-center justify-between font-bold">
                           <span>{selectedRoute.legs[0]?.fromName || "Sudirman Hub"}</span>
-                          <span className="text-gray-500 dark:text-gray-400">
+                          <span style={{ color: "var(--foreground-muted)" }}>
                             {selectedRoute.departureTime}
                           </span>
                         </div>
-                        <p className="text-[11px] text-gray-400">Titik Keberangkatan</p>
+                        <p className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>Titik Keberangkatan</p>
                       </div>
 
                       <div>
@@ -290,16 +305,16 @@ function CheckoutContent() {
                             {selectedRoute.stops[selectedRoute.stops.length - 1]?.name ||
                               "University Station"}
                           </span>
-                          <span className="text-gray-500 dark:text-gray-400">
+                          <span style={{ color: "var(--foreground-muted)" }}>
                             {selectedRoute.arrivalTime}
                           </span>
                         </div>
-                        <p className="text-[11px] text-gray-400">Stasiun Tujuan</p>
+                        <p className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>Stasiun Tujuan</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-dashed flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                  <div className="pt-2 border-t border-dashed flex items-center justify-between text-xs" style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}>
                     <span className="flex items-center space-x-1.5">
                       <Clock className="w-3.5 h-3.5" />
                       <span>Estimasi Perjalanan: {selectedRoute.totalDurationMinutes} menit</span>
@@ -316,7 +331,7 @@ function CheckoutContent() {
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-sm sm:text-base flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-indigo-500" />
+                    <Users className="w-4 h-4 text-emerald-500" />
                     <span>Data Penumpang & Pemesan</span>
                   </h3>
                   <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center space-x-1">
@@ -330,7 +345,7 @@ function CheckoutContent() {
                     className="p-3 rounded-xl border"
                     style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
                   >
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
                       Nama Pemesan
                     </span>
                     <p className="font-bold text-sm mt-0.5 truncate">{user?.name || "Mahasiswa"}</p>
@@ -339,7 +354,7 @@ function CheckoutContent() {
                     className="p-3 rounded-xl border"
                     style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
                   >
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
                       Email Akun
                     </span>
                     <p className="font-bold text-sm mt-0.5 truncate">{user?.email || "chrs@gmail.com"}</p>
@@ -347,16 +362,17 @@ function CheckoutContent() {
                 </div>
 
                 {/* Passenger Quantity Counter */}
-                <div className="flex items-center justify-between pt-2 border-t text-xs">
+                <div className="flex items-center justify-between pt-2 border-t text-xs" style={{ borderColor: "var(--border)" }}>
                   <div>
                     <span className="font-bold text-sm block">Jumlah Tiket / Penumpang</span>
-                    <span className="text-[11px] text-gray-400">Maksimal 5 tiket per transaksi</span>
+                    <span className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>Maksimal 5 tiket per transaksi</span>
                   </div>
-                  <div className="flex items-center space-x-3 bg-black/5 dark:bg-white/10 p-1.5 rounded-2xl border">
+                  <div className="flex items-center space-x-3 bg-black/5 dark:bg-white/10 p-1.5 rounded-2xl border" style={{ borderColor: "var(--border)" }}>
                     <button
                       onClick={() => setPassengerCount(Math.max(1, passengerCount - 1))}
                       disabled={passengerCount <= 1}
-                      className="w-8 h-8 rounded-xl bg-white dark:bg-neutral-800 flex items-center justify-center font-bold text-sm shadow-xs disabled:opacity-40 cursor-pointer"
+                      className="w-8 h-8 rounded-xl border flex items-center justify-center font-bold text-sm shadow-xs disabled:opacity-40 cursor-pointer"
+                      style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--foreground)" }}
                     >
                       -
                     </button>
@@ -364,7 +380,8 @@ function CheckoutContent() {
                     <button
                       onClick={() => setPassengerCount(Math.min(5, passengerCount + 1))}
                       disabled={passengerCount >= 5}
-                      className="w-8 h-8 rounded-xl bg-white dark:bg-neutral-800 flex items-center justify-center font-bold text-sm shadow-xs disabled:opacity-40 cursor-pointer"
+                      className="w-8 h-8 rounded-xl border flex items-center justify-center font-bold text-sm shadow-xs disabled:opacity-40 cursor-pointer"
+                      style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--foreground)" }}
                     >
                       +
                     </button>
@@ -382,7 +399,7 @@ function CheckoutContent() {
                     <CreditCard className="w-4 h-4 text-emerald-500" />
                     <span>Pilih Metode Pembayaran</span>
                   </h3>
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
                     Simulasi Instan
                   </span>
                 </div>
@@ -394,9 +411,12 @@ function CheckoutContent() {
                     className={`flex items-start justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
                       paymentMethod === "wallet"
                         ? "border-black dark:border-white ring-2 ring-black/10 dark:ring-white/10 shadow-sm"
-                        : "border-gray-200 dark:border-neutral-800 hover:border-gray-400"
+                        : "hover:border-gray-400"
                     }`}
-                    style={{ background: "var(--surface-secondary)" }}
+                    style={{
+                      background: "var(--surface-secondary)",
+                      borderColor: paymentMethod === "wallet" ? undefined : "var(--border)",
+                    }}
                   >
                     <div className="flex items-start space-x-3.5">
                       <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5">
@@ -405,13 +425,11 @@ function CheckoutContent() {
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-bold text-sm">UrbanRide Transit Wallet</span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-                            1-Klik Instan
-                          </span>
+                          
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs mt-0.5" style={{ color: "var(--foreground-muted)" }}>
                           Saldo Dompet:{" "}
-                          <strong className="text-gray-900 dark:text-white font-bold">
+                          <strong className="font-bold" style={{ color: "var(--foreground)" }}>
                             Rp {walletBalance.toLocaleString("id-ID")}
                           </strong>
                         </p>
@@ -427,8 +445,9 @@ function CheckoutContent() {
                       className={`w-5 h-5 rounded-full border flex items-center justify-center mt-1 ${
                         paymentMethod === "wallet"
                           ? "bg-black dark:bg-white text-white dark:text-black border-transparent"
-                          : "border-gray-300 dark:border-neutral-700"
+                          : ""
                       }`}
+                      style={{ borderColor: paymentMethod === "wallet" ? undefined : "var(--border)" }}
                     >
                       {paymentMethod === "wallet" && <Check className="w-3 h-3 stroke-[3]" />}
                     </div>
@@ -440,9 +459,12 @@ function CheckoutContent() {
                     className={`flex items-start justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
                       paymentMethod === "qris"
                         ? "border-black dark:border-white ring-2 ring-black/10 dark:ring-white/10 shadow-sm"
-                        : "border-gray-200 dark:border-neutral-800 hover:border-gray-400"
+                        : "hover:border-gray-400"
                     }`}
-                    style={{ background: "var(--surface-secondary)" }}
+                    style={{
+                      background: "var(--surface-secondary)",
+                      borderColor: paymentMethod === "qris" ? undefined : "var(--border)",
+                    }}
                   >
                     <div className="flex items-start space-x-3.5">
                       <div className="w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center shrink-0 mt-0.5">
@@ -451,11 +473,8 @@ function CheckoutContent() {
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-bold text-sm">QRIS Dinamis</span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-200 dark:bg-neutral-800">
-                            BCA • GoPay • OVO • Dana
-                          </span>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs mt-0.5" style={{ color: "var(--foreground-muted)" }}>
                           Scan barcode langsung dari semua aplikasi mobile banking & e-wallet
                         </p>
                       </div>
@@ -464,8 +483,9 @@ function CheckoutContent() {
                       className={`w-5 h-5 rounded-full border flex items-center justify-center mt-1 ${
                         paymentMethod === "qris"
                           ? "bg-black dark:bg-white text-white dark:text-black border-transparent"
-                          : "border-gray-300 dark:border-neutral-700"
+                          : ""
                       }`}
+                      style={{ borderColor: paymentMethod === "qris" ? undefined : "var(--border)" }}
                     >
                       {paymentMethod === "qris" && <Check className="w-3 h-3 stroke-[3]" />}
                     </div>
@@ -477,9 +497,12 @@ function CheckoutContent() {
                     className={`flex items-start justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
                       paymentMethod === "va"
                         ? "border-black dark:border-white ring-2 ring-black/10 dark:ring-white/10 shadow-sm"
-                        : "border-gray-200 dark:border-neutral-800 hover:border-gray-400"
+                        : "hover:border-gray-400"
                     }`}
-                    style={{ background: "var(--surface-secondary)" }}
+                    style={{
+                      background: "var(--surface-secondary)",
+                      borderColor: paymentMethod === "va" ? undefined : "var(--border)",
+                    }}
                   >
                     <div className="flex items-start space-x-3.5">
                       <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shrink-0 mt-0.5">
@@ -500,8 +523,13 @@ function CheckoutContent() {
                               className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition border ${
                                 selectedBank === bank && paymentMethod === "va"
                                   ? "bg-black text-white dark:bg-white dark:text-black border-transparent"
-                                  : "bg-white dark:bg-neutral-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-neutral-700"
+                                  : "hover:opacity-80"
                               }`}
+                              style={
+                                selectedBank === bank && paymentMethod === "va"
+                                  ? undefined
+                                  : { background: "var(--surface)", borderColor: "var(--border)", color: "var(--foreground-muted)" }
+                              }
                             >
                               {bank}
                             </button>
@@ -513,8 +541,9 @@ function CheckoutContent() {
                       className={`w-5 h-5 rounded-full border flex items-center justify-center mt-1 ${
                         paymentMethod === "va"
                           ? "bg-black dark:bg-white text-white dark:text-black border-transparent"
-                          : "border-gray-300 dark:border-neutral-700"
+                          : ""
                       }`}
+                      style={{ borderColor: paymentMethod === "va" ? undefined : "var(--border)" }}
                     >
                       {paymentMethod === "va" && <Check className="w-3 h-3 stroke-[3]" />}
                     </div>
@@ -531,12 +560,12 @@ function CheckoutContent() {
               >
                 <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: "var(--border)" }}>
                   <h3 className="font-bold text-base font-display">Ringkasan Pembayaran</h3>
-                  <span className="text-xs font-semibold text-gray-400">ID: #{selectedRoute.id}</span>
+                  <span className="text-xs font-semibold" style={{ color: "var(--foreground-muted)" }}>ID: #{selectedRoute.id}</span>
                 </div>
 
                 <div className="space-y-3 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span style={{ color: "var(--foreground-muted)" }}>
                       Tarif Rute ({passengerCount} Penumpang)
                     </span>
                     <span className="font-semibold">
@@ -545,14 +574,14 @@ function CheckoutContent() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">Biaya Layanan Platform</span>
+                    <span style={{ color: "var(--foreground-muted)" }}>Biaya Layanan Platform</span>
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">
                       Gratis (Promo)
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">Asuransi Perjalanan Transit</span>
+                    <span style={{ color: "var(--foreground-muted)" }}>Asuransi Perjalanan Transit</span>
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">
                       Termasuk
                     </span>
@@ -563,14 +592,11 @@ function CheckoutContent() {
                     style={{ borderColor: "var(--border)" }}
                   >
                     <div>
-                      <span className="text-xs text-gray-400 font-semibold block">Total Pembayaran</span>
-                      <span className="text-2xl font-black font-display tracking-tight text-gray-900 dark:text-white">
+                      <span className="text-xs font-semibold block" style={{ color: "var(--foreground-muted)" }}>Total Pembayaran</span>
+                      <span className="text-2xl font-black font-display tracking-tight" style={{ color: "var(--foreground)" }}>
                         Rp {totalAmount.toLocaleString("id-ID")}
                       </span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/40">
-                      Lunas Seketika
-                    </span>
                   </div>
                 </div>
 
@@ -594,13 +620,13 @@ function CheckoutContent() {
                 </button>
 
                 {/* Trust & Guarantee Badges */}
-                <div className="pt-2 border-t text-[11px] text-gray-400 space-y-1.5" style={{ borderColor: "var(--border)" }}>
+                <div className="pt-2 border-t text-[11px] space-y-1.5" style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}>
                   <p className="flex items-center space-x-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     <span>Tiket QR otomatis aktif & siap tap-in setelah lunas</span>
                   </p>
                   <p className="flex items-center space-x-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     <span>Garansi validitas tiket sesuai jadwal rute operasional</span>
                   </p>
                 </div>
@@ -614,19 +640,17 @@ function CheckoutContent() {
               className="p-8 rounded-3xl border shadow-2xl text-center space-y-6"
               style={{ background: "var(--surface)", borderColor: "var(--border)" }}
             >
-              {/* Success Badge Icon */}
-              <div className="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 shadow-md">
-                <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
+              {/* Clean Monochromatic Confirmation Icon (No AI Slop Squircle) */}
+              <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-black text-white dark:bg-white dark:text-black shadow-sm">
+                <Check className="w-6 h-6 stroke-[3]" />
               </div>
 
+              {/* Title & Description (No Redundant Capsule Badge) */}
               <div className="space-y-1.5">
-                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-                  Pembayaran Berhasil • Tiket Aktif
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-gray-900 dark:text-white pt-1">
+                <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight" style={{ color: "var(--foreground)" }}>
                   Tiket Boarding Pass Terbit!
                 </h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+                <p className="text-xs max-w-sm mx-auto" style={{ color: "var(--foreground-muted)" }}>
                   Transaksi telah diverifikasi. Tiket digital Anda telah tersimpan dan siap digunakan untuk tap-in di stasiun keberangkatan.
                 </p>
               </div>
@@ -637,32 +661,32 @@ function CheckoutContent() {
                 style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
               >
                 <div className="flex items-center justify-between pb-3 border-b text-xs font-bold" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-gray-400">Nomor Tiket:</span>
-                  <span className="font-mono text-sm tracking-wide text-indigo-600 dark:text-indigo-400">
+                  <span style={{ color: "var(--foreground-muted)" }}>Nomor Tiket:</span>
+                  <span className="font-mono text-sm tracking-wide text-emerald-600 dark:text-emerald-400">
                     {issuedTicketId}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
                   <div>
-                    <p className="text-[10px] text-gray-400 uppercase font-bold">Rute Perjalanan</p>
-                    <p className="font-bold text-sm text-gray-900 dark:text-white mt-0.5">
+                    <p className="text-[10px] uppercase font-bold" style={{ color: "var(--foreground-muted)" }}>Rute Perjalanan</p>
+                    <p className="font-bold text-sm mt-0.5" style={{ color: "var(--foreground)" }}>
                       {selectedRoute.title}
                     </p>
-                    <p className="text-[11px] text-gray-500">
+                    <p className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>
                       Armada: {selectedRoute.vehicle.name} (#{selectedRoute.vehicle.code})
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold">Total Lunas</p>
+                    <p className="text-[10px] uppercase font-bold" style={{ color: "var(--foreground-muted)" }}>Total Lunas</p>
                     <p className="font-bold text-sm text-emerald-600 dark:text-emerald-400 mt-0.5">
                       Rp {totalAmount.toLocaleString("id-ID")}
                     </p>
-                    <p className="text-[11px] text-gray-500">{passengerCount} Penumpang</p>
+                    <p className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>{passengerCount} Penumpang</p>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t flex items-center justify-between text-[11px] text-gray-400" style={{ borderColor: "var(--border)" }}>
+                <div className="pt-2 border-t flex items-center justify-between text-[11px]" style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}>
                   <span>Berlaku s/d: 4 Jam ke depan</span>
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold">
                     Siap Tap-In
@@ -709,7 +733,8 @@ function CheckoutContent() {
                     sessionStorage.setItem("urbanride-active-tab", "ticket");
                     router.push("/");
                   }}
-                  className="w-full py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition cursor-pointer text-center"
+                  className="w-full py-2 text-xs font-semibold hover:opacity-80 transition cursor-pointer text-center block"
+                  style={{ color: "var(--foreground-muted)" }}
                 >
                   Lihat Daftar Tiket di Tab &quot;Tiket&quot; →
                 </button>
@@ -734,10 +759,10 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-black">
+        <div className="min-h-screen w-full flex items-center justify-center" style={{ background: "var(--background)" }}>
           <div className="flex flex-col items-center space-y-3">
-            <Loader2 className="w-8 h-8 animate-spin text-black dark:text-white" />
-            <p className="text-xs font-semibold text-gray-500">Memuat halaman checkout...</p>
+            <Loader2 className="w-8 h-8 animate-spin" style={{ color: "var(--foreground)" }} />
+            <p className="text-xs font-semibold" style={{ color: "var(--foreground-muted)" }}>Memuat halaman checkout...</p>
           </div>
         </div>
       }

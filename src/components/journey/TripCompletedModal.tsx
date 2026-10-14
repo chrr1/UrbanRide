@@ -29,96 +29,115 @@ export default function TripCompletedModal({
         className="relative w-full max-w-md rounded-3xl p-6 sm:p-7 border shadow-2xl space-y-5 animate-scaleUp transition-all"
         style={{ background: "var(--surface)", borderColor: "var(--border)" }}
       >
-        {/* Close icon */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
-          style={{ color: "var(--foreground-muted)" }}
-        >
-          <X className="w-4 h-4" />
-        </button>
+        {/* Top Bar: Transit Code & Close Button */}
+        <div className="flex items-center justify-between pb-1">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center shadow-xs">
+              <VehicleIcon className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-mono text-xs font-bold" style={{ color: "var(--foreground)" }}>
+                #{route.vehicle.code}
+              </span>
+              <span className="text-[11px] block" style={{ color: "var(--foreground-muted)" }}>
+                {route.vehicle.name}
+              </span>
+            </div>
+          </div>
 
-        {/* Celebration Header */}
-        <div className="text-center space-y-2 pt-2">
-          <div className="w-16 h-16 rounded-3xl mx-auto flex items-center justify-center bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-sm">
-            <CheckCircle2 className="w-9 h-9 stroke-[2.5]" />
-          </div>
-          <div>
-            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-              Perjalanan Selesai • Tiba di Tujuan
-            </span>
-            <h2 className="text-2xl font-black font-display tracking-tight mt-2" style={{ color: "var(--foreground)" }}>
-              Selamat Sampai Tujuan!
-            </h2>
-            <p className="text-xs mt-1" style={{ color: "var(--foreground-muted)" }}>
-              Anda telah tiba dengan aman di <strong className="font-bold" style={{ color: "var(--foreground)" }}>{destName}</strong>
-            </p>
-          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer hover:opacity-70"
+            style={{ background: "var(--surface-secondary)", color: "var(--foreground-muted)" }}
+            title="Tutup"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Trip Summary Card */}
+        {/* Arrival Hero (Clean & Direct, No Squircle Slop, No Dot) */}
+        <div className="space-y-1">
+          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block">
+            Perjalanan Selesai Tepat Waktu
+          </span>
+          <h2 className="text-2xl font-black font-display tracking-tight" style={{ color: "var(--foreground)" }}>
+            {destName}
+          </h2>
+          <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
+            Anda telah tiba dengan aman pada pukul <strong>{route.arrivalTime}</strong>.
+          </p>
+        </div>
+
+        {/* Trip Receipt Card */}
         <div
-          className="p-4 rounded-2xl border space-y-3.5 text-xs"
+          className="rounded-2xl border overflow-hidden"
           style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
         >
-          {/* Route & Vehicle */}
-          <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: "var(--border)" }}>
-            <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 rounded-xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center shrink-0 shadow-xs">
-                <VehicleIcon className="w-4.5 h-4.5" />
+          {/* Timeline */}
+          <div className="p-4 space-y-3">
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex-1">
+                <span className="text-[10px] font-semibold block" style={{ color: "var(--foreground-muted)" }}>
+                  Keberangkatan
+                </span>
+                <p className="font-bold truncate mt-0.5" style={{ color: "var(--foreground)" }}>
+                  {originName}
+                </p>
+                <p className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>
+                  {route.departureTime}
+                </p>
               </div>
-              <div>
-                <p className="font-bold text-sm" style={{ color: "var(--foreground)" }}>{route.title}</p>
-                <p className="text-[11px] text-gray-500">{route.vehicle.name} • {route.vehicle.driverName}</p>
+
+              <div className="flex flex-col items-center px-3">
+                <ArrowRight className="w-4 h-4 text-emerald-500" />
+                <span className="text-[10px] font-bold mt-0.5" style={{ color: "var(--foreground-muted)" }}>
+                  {route.totalDurationMinutes} min
+                </span>
+              </div>
+
+              <div className="flex-1 text-right">
+                <span className="text-[10px] font-semibold block" style={{ color: "var(--foreground-muted)" }}>
+                  Tujuan Akhir
+                </span>
+                <p className="font-bold truncate mt-0.5" style={{ color: "var(--foreground)" }}>
+                  {destName}
+                </p>
+                <p className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>
+                  {route.arrivalTime}
+                </p>
               </div>
             </div>
-            <span className="font-mono text-xs font-bold px-2 py-1 rounded-lg border bg-white dark:bg-neutral-900" style={{ borderColor: "var(--border)" }}>
-              #{route.vehicle.code}
-            </span>
           </div>
 
-          {/* Path */}
-          <div className="flex items-center justify-between text-xs">
-            <div>
-              <span className="text-[10px] text-gray-400 uppercase font-semibold">Berangkat</span>
-              <p className="font-bold mt-0.5 truncate max-w-[130px]" style={{ color: "var(--foreground)" }}>{originName}</p>
-              <p className="text-[11px] text-gray-400">{route.departureTime}</p>
-            </div>
-            <div className="flex flex-col items-center px-2">
-              <ArrowRight className="w-4 h-4 text-emerald-500" />
-              <span className="text-[9px] font-bold text-gray-400 mt-0.5">{route.totalDurationMinutes} min</span>
-            </div>
-            <div className="text-right">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold">Tiba</span>
-              <p className="font-bold mt-0.5 truncate max-w-[130px]" style={{ color: "var(--foreground)" }}>{destName}</p>
-              <p className="text-[11px] text-gray-400">{route.arrivalTime}</p>
-            </div>
+          {/* Perforated Divider */}
+          <div className="relative flex items-center justify-between px-3 py-1">
+            <div className="w-3 h-6 -ml-4 rounded-r-full border-r border-y" style={{ background: "var(--surface)", borderColor: "var(--border)" }} />
+            <div className="flex-1 border-t border-dashed mx-2" style={{ borderColor: "var(--border)" }} />
+            <div className="w-3 h-6 -mr-4 rounded-l-full border-l border-y" style={{ background: "var(--surface)", borderColor: "var(--border)" }} />
           </div>
 
-          {/* Stats Badges */}
-          <div className="grid grid-cols-2 gap-2 pt-1 border-t" style={{ borderColor: "var(--border)" }}>
-            <div className="p-2.5 rounded-xl border flex items-center space-x-2 bg-white dark:bg-neutral-900" style={{ borderColor: "var(--border)" }}>
-              <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
-              <div>
-                <p className="text-[10px] text-gray-400 font-semibold">Emisi Hemat</p>
-                <p className="font-bold text-xs text-emerald-600 dark:text-emerald-400">~1.4 kg CO₂</p>
-              </div>
+          {/* Key Metrics Row */}
+          <div className="grid grid-cols-3 divide-x p-3 text-center text-xs" style={{ borderColor: "var(--border)" }}>
+            <div className="px-2">
+              <span className="text-[10px] block" style={{ color: "var(--foreground-muted)" }}>Tarif Lunas</span>
+              <p className="font-bold text-sm mt-0.5" style={{ color: "var(--foreground)" }}>{formattedFare}</p>
             </div>
-            <div className="p-2.5 rounded-xl border flex items-center space-x-2 bg-white dark:bg-neutral-900" style={{ borderColor: "var(--border)" }}>
-              <ShieldCheck className="w-4 h-4 text-indigo-500 shrink-0" />
-              <div>
-                <p className="text-[10px] text-gray-400 font-semibold">Status Tiket</p>
-                <p className="font-bold text-xs text-indigo-600 dark:text-indigo-400">Selesai (Used)</p>
-              </div>
+            <div className="px-2">
+              <span className="text-[10px] block" style={{ color: "var(--foreground-muted)" }}>Durasi</span>
+              <p className="font-bold text-sm mt-0.5" style={{ color: "var(--foreground)" }}>{route.totalDurationMinutes} min</p>
+            </div>
+            <div className="px-2">
+              <span className="text-[10px] block" style={{ color: "var(--foreground-muted)" }}>Hemat Emisi</span>
+              <p className="font-bold text-sm text-emerald-600 dark:text-emerald-400 mt-0.5">~1.4 kg CO₂</p>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-2.5 pt-1">
+        <div className="space-y-2 pt-1">
           <button
             onClick={onViewHistory}
-            className="w-full py-3.5 px-4 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+            className="w-full py-3.5 px-4 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-xs sm:text-sm shadow-lg hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
           >
             <History className="w-4 h-4" />
             <span>Lihat Riwayat Perjalanan</span>
