@@ -45,14 +45,14 @@ export default function RouteDetailPanel({
           <span>Back to routes</span>
         </button>
         <span
-          className="px-3 py-1 rounded-full text-xs font-bold shadow-inner border tracking-widest uppercase"
+          className="text-xs font-bold"
           style={{
-            background: "var(--surface-secondary)",
-            color: "var(--foreground)",
-            borderColor: "var(--border)"
+            color: route.vehicle.statusText.toLowerCase().includes("delayed")
+              ? "#d97706"
+              : "#059669",
           }}
         >
-          ● {route.vehicle.statusText}
+          {route.vehicle.statusText}
         </span>
       </div>
 
@@ -182,27 +182,31 @@ export default function RouteDetailPanel({
       {/* CTAs */}
       {hasActiveTicket && activeTicket ? (
         <div className="space-y-3 pt-2">
-          {/* Active Ticket Banner */}
+          {/* Active Ticket Banner — Clean Integrated Card */}
           <div
             className="p-3.5 rounded-2xl border flex items-center justify-between"
             style={{
-              background: "rgba(16, 185, 129, 0.08)",
-              borderColor: "rgba(16, 185, 129, 0.25)",
+              background: "var(--surface-secondary)",
+              borderColor: "var(--border)",
             }}
           >
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
+              <div
+                className="w-8 h-8 rounded-xl border flex items-center justify-center shrink-0"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                }}
+              >
+                <Ticket className="w-4 h-4" />
               </div>
               <div>
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
-                    Tiket Aktif Ditemukan
-                  </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                </div>
-                <p className="text-[11px] font-mono text-gray-500 dark:text-gray-400">
-                  {activeTicket.id} • {activeTicket.passengerCount} Penumpang
+                <span className="text-xs font-bold block" style={{ color: "var(--foreground)" }}>
+                  Tiket Siap Digunakan
+                </span>
+                <p className="text-[11px] font-mono mt-0.5" style={{ color: "var(--foreground-muted)" }}>
+                  {activeTicket.id} · {activeTicket.passengerCount} Penumpang
                 </p>
               </div>
             </div>
@@ -210,10 +214,15 @@ export default function RouteDetailPanel({
             {onViewTicket && (
               <button
                 onClick={onViewTicket}
-                className="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] shadow-sm hover:opacity-90 transition flex items-center space-x-1 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl border font-bold text-xs hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center space-x-1.5 cursor-pointer"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                }}
               >
-                <QrCode className="w-3 h-3" />
-                <span>QR Pass</span>
+                <QrCode className="w-3.5 h-3.5" />
+                <span>Lihat QR</span>
               </button>
             )}
           </div>
@@ -259,7 +268,7 @@ export default function RouteDetailPanel({
             <span>Beli Tiket Perjalanan • {formattedFare}</span>
           </button>
 
-          <p className="text-[11px] text-center text-gray-400 font-medium">
+          <p className="text-[11px] text-center font-medium" style={{ color: "var(--foreground-muted)" }}>
             Beli tiket untuk mengaktifkan live tracking & boarding pass QR code
           </p>
         </div>

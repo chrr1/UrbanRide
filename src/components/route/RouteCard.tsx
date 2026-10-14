@@ -29,7 +29,7 @@ export default function RouteCard({
 
   const getBadgeInlineStyle = (badge: RouteOption["badge"]) => {
     if (badge === "RECOMMENDED") {
-      return { background: "var(--accent-cyber-lime)", color: "#000" };
+      return { background: "var(--accent-cyber-lime)", color: "#fff" };
     }
     return {};
   };
@@ -100,31 +100,15 @@ export default function RouteCard({
           </div>
         </div>
 
-        {/* Status Pill Badge */}
+        {/* Status Text (Clean Typography, No Pill, No Dot) */}
         <div>
           {route.vehicle.status === "on-time" ? (
-            <span
-              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
-              style={{
-                background: "rgba(34, 197, 94, 0.1)",
-                color: "#16a34a",
-                borderColor: "rgba(34, 197, 94, 0.25)",
-              }}
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>{route.vehicle.statusText}</span>
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+              {route.vehicle.statusText}
             </span>
           ) : (
-            <span
-              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
-              style={{
-                background: "rgba(245, 158, 11, 0.1)",
-                color: "#d97706",
-                borderColor: "rgba(245, 158, 11, 0.3)",
-              }}
-            >
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-              <span>{route.vehicle.statusText}</span>
+            <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
+              {route.vehicle.statusText}
             </span>
           )}
         </div>

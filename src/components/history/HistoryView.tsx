@@ -96,7 +96,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
                   Total Journeys
                 </p>
                 <p className="text-xl font-black mt-0.5" style={{ color: "var(--foreground)" }}>
-                  {MOCK_HISTORY.length}
+                  {allHistory.length}
                 </p>
                 <p className="text-[11px] mt-0.5" style={{ color: "var(--foreground-muted)" }}>
                   {busCount} Bus · {trainCount} Metro
@@ -114,7 +114,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
                   Rp {totalSpent.toLocaleString("id-ID")}
                 </p>
                 <p className="text-[11px] mt-0.5" style={{ color: "var(--foreground-muted)" }}>
-                  Avg. Rp {Math.round(totalSpent / MOCK_HISTORY.length).toLocaleString("id-ID")}/trip
+                  {allHistory.length > 0 ? `Avg. Rp ${Math.round(totalSpent / allHistory.length).toLocaleString("id-ID")}/trip` : "No trips yet"}
                 </p>
               </div>
             </div>
@@ -155,7 +155,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
               >
                 {(
                   [
-                    { id: "all", label: "All", count: MOCK_HISTORY.length },
+                    { id: "all", label: "All", count: allHistory.length },
                     { id: "bus", label: "Bus", count: busCount },
                     { id: "train", label: "Metro", count: trainCount },
                   ] as const
@@ -165,12 +165,11 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
                     <button
                       key={tab.id}
                       onClick={() => setActiveFilter(tab.id)}
-                      className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-center cursor-pointer ${
-                        isActive
-                          ? "bg-black text-white shadow-xs"
-                          : "hover:text-foreground"
-                      }`}
-                      style={!isActive ? { color: "var(--foreground-muted)" } : {}}
+                      className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-center cursor-pointer`}
+                      style={isActive
+                        ? { background: "var(--foreground)", color: "var(--background)" }
+                        : { color: "var(--foreground-muted)" }
+                      }
                     >
                       <span>{tab.label}</span>
                       <span className="ml-1 opacity-70">({tab.count})</span>
@@ -279,7 +278,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
                             color: "var(--foreground-muted)",
                           }}
                         >
-                          <CheckCircle2 className="w-3 h-3 text-gray-400" />
+                          <CheckCircle2 className="w-3 h-3" style={{ color: "var(--foreground-muted)" }} />
                           <span>COMPLETED</span>
                         </span>
                       )}

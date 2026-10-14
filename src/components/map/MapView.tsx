@@ -263,14 +263,14 @@ export default function MapView({
       const vehicleIcon = createCustomIcon(vehicleHtml, "", [160, 36]);
       const vehMarker = L.marker([veh.latitude, veh.longitude], { icon: vehicleIcon, zIndexOffset: 1000 });
 
-      const statusPillStyle = veh.status === "delayed"
-        ? "background:#fef3c7;color:#92400e"
-        : "background:#d1fae5;color:#065f46";
+      const statusTextStyle = veh.status === "delayed"
+        ? "color:#d97706"
+        : "color:#059669";
 
       const vehPopup = `
         <div style="padding:12px;width:200px;font-family:Inter,sans-serif">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <span style="padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:700;${statusPillStyle}">● ${veh.statusText}</span>
+            <span style="font-size:11px;font-weight:700;${statusTextStyle}">${veh.statusText}</span>
             <span style="font-size:10px;font-weight:600;color:#9ca3af">${veh.plateNumber}</span>
           </div>
           <h4 style="font-weight:700;font-size:14px;color:#111;margin:0 0 2px">${veh.name}</h4>
@@ -297,13 +297,18 @@ export default function MapView({
     <div className="relative w-full h-full min-h-[500px]">
 
       {/* Floating Mode Filter Bar — TOP CENTER */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1.5 p-1.5 bg-white/95 backdrop-blur-md rounded-full shadow-lg border border-gray-200 select-none">
+      <div
+        className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1.5 p-1.5 backdrop-blur-md rounded-full shadow-lg border select-none"
+        style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}
+      >
         <button
           type="button"
           onClick={() => setActiveFilter("all")}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all text-sm font-semibold ${
-            activeFilter === "all" ? "bg-gray-900 text-white" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all text-sm font-semibold`}
+          style={activeFilter === "all"
+            ? { background: "var(--foreground)", color: "var(--background)" }
+            : { color: "var(--foreground-muted)" }
+          }
         >
           <Layers className="w-4 h-4" />
           <span>All</span>
