@@ -14,6 +14,7 @@ interface RouteDetailPanelProps {
   onViewTicket?: () => void;
 }
 
+// Komponen rincian lengkap rute, timeline transit, dan pembelian tiket
 export default function RouteDetailPanel({
   route,
   onBack,
@@ -56,7 +57,7 @@ export default function RouteDetailPanel({
         </span>
       </div>
 
-      {/* Overview */}
+      {/* Ringkasan judul rute, estimasi durasi, dan total tarif */}
       <div>
         <h2 className="text-2xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
           {route.title}
@@ -73,7 +74,7 @@ export default function RouteDetailPanel({
         </div>
       </div>
 
-      {/* Driver Info */}
+      {/* Informasi armada dan kontak pengemudi kendaraan */}
       <div
         className="p-4 rounded-2xl border flex items-center justify-between"
         style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
@@ -109,7 +110,7 @@ export default function RouteDetailPanel({
         </div>
       </div>
 
-      {/* Timeline */}
+      {/* Garis waktu tahapan rute (stasiun asal, transfer armada, stasiun tujuan) */}
       <div className="space-y-5 pt-3">
         <h4 className="text-sm font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
           Step by Step Timeline
@@ -179,7 +180,7 @@ export default function RouteDetailPanel({
         </div>
       </div>
 
-      {/* CTAs */}
+      {/* Tombol aksi jika tiket rute ini sudah berhasil dibeli */}
       {hasActiveTicket && activeTicket ? (
         <div className="space-y-3 pt-2">
           {/* Active Ticket Banner — Clean Integrated Card */}
@@ -227,7 +228,7 @@ export default function RouteDetailPanel({
             )}
           </div>
 
-          {/* Primary Action: Mulai Perjalanan (Sudah Punya Tiket!) */}
+          {/* Tombol untuk memulai live tracking perjalanan */}
           <button
             onClick={() => onStartJourney(route)}
             className="w-full py-4 px-4 text-sm font-bold rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 shadow-xl border backdrop-blur-md cursor-pointer"
@@ -253,7 +254,7 @@ export default function RouteDetailPanel({
           )}
         </div>
       ) : (
-        /* Belum Beli Tiket */
+        /* Tombol aksi beli tiket rute jika pengguna belum memiliki tiket */
         <div className="space-y-2 pt-2">
           <button
             onClick={() => onBuyTicket && onBuyTicket(route)}

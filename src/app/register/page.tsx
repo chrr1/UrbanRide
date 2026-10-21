@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Create an account for UrbanRide Smart City Transit Platform.",
 };
 
+// Halaman pendaftaran (register) akun baru pengguna UrbanRide
 export default function RegisterPage() {
   return (
     <div
@@ -17,7 +18,7 @@ export default function RegisterPage() {
         `,
       }}
     >
-      {/* The Centered Auth Card */}
+      {/* Kartu formulir autentikasi pengguna (mode register) */}
       <AuthCard initialMode="register" />
     </div>
   );

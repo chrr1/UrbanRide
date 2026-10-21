@@ -1,5 +1,6 @@
 "use client";
 
+// Modal prompt login yang muncul ketika pengguna mencoba memilih rute tanpa login
 import { useEffect } from "react";
 import { X, LogIn, ArrowRight, Bus, Train } from "lucide-react";
 import { RouteOption } from "@/data/mockData";
@@ -19,7 +20,7 @@ export default function AuthPromptModal({
   onQuickLogin,
   onGoToLogin,
 }: AuthPromptModalProps) {
-  // Close on Escape key
+  // Tutup modal ketika tombol Escape ditekan
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -97,7 +98,7 @@ export default function AuthPromptModal({
           </div>
         </div>
 
-        {/* Selected Route Preview Card */}
+        {/* Kartu pratinjau rute yang dipilih pengguna */}
         <div
           className="p-3.5 rounded-2xl border mb-5 space-y-2.5 transition-colors"
           style={{
@@ -142,7 +143,7 @@ export default function AuthPromptModal({
           </div>
         </div>
 
-        {/* Actions (Native UrbanRide styling, high-contrast, zero AI purple) */}
+        {/* Tombol aksi: masuk ke akun atau batal */}
         <div className="space-y-2">
           {/* Primary CTA: Solid black/white button */}
           <button

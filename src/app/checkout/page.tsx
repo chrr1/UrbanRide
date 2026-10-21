@@ -33,6 +33,7 @@ import { useTicket } from "@/context/TicketContext";
 import { MOCK_ROUTES, RouteOption } from "@/data/mockData";
 import TicketView from "@/components/ticket/TicketView";
 
+// Komponen halaman checkout pemesanan tiket dan transaksi pembayaran
 function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -127,7 +128,8 @@ function CheckoutContent() {
           <div className="space-y-3 pt-2">
             <button
               onClick={handleRedirectToLogin}
-              className="w-full py-3.5 px-4 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+              className="w-full py-3.5 px-4 rounded-xl font-bold text-sm shadow-lg hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+              style={{ background: "var(--foreground)", color: "var(--background)" }}
             >
               <ShieldCheck className="w-4 h-4" />
               <span>Masuk Sekarang</span>
@@ -334,7 +336,7 @@ function CheckoutContent() {
                     <Users className="w-4 h-4 text-emerald-500" />
                     <span>Data Penumpang & Pemesan</span>
                   </h3>
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center space-x-1">
+                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-500 flex items-center space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>Terverifikasi</span>
                   </span>
@@ -361,7 +363,7 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                {/* Passenger Quantity Counter */}
+                {/* Pengaturan jumlah penumpang tiket (maksimal 5 penumpang) */}
                 <div className="flex items-center justify-between pt-2 border-t text-xs" style={{ borderColor: "var(--border)" }}>
                   <div>
                     <span className="font-bold text-sm block">Jumlah Tiket / Penumpang</span>
@@ -389,7 +391,7 @@ function CheckoutContent() {
                 </div>
               </div>
 
-              {/* Card 3: Payment Method Selection */}
+              {/* Pilihan metode pembayaran (Dompet Transit, QRIS, Virtual Account, Kartu) */}
               <div
                 className="p-5 sm:p-6 rounded-3xl border shadow-sm space-y-4"
                 style={{ background: "var(--surface)", borderColor: "var(--border)" }}
@@ -552,8 +554,8 @@ function CheckoutContent() {
               </div>
             </div>
 
-            {/* Right Column: Order Summary & Pay CTA */}
-            <div className="lg:col-span-5 sticky top-20 space-y-4">
+            {/* Sidebar ringkasan total pembayaran dan tombol bayar sekarang */}
+            <div className="lg:col-span-5 sticky top-6 self-start space-y-4">
               <div
                 className="p-6 rounded-3xl border shadow-lg space-y-5"
                 style={{ background: "var(--surface)", borderColor: "var(--border)" }}
@@ -575,14 +577,14 @@ function CheckoutContent() {
 
                   <div className="flex items-center justify-between">
                     <span style={{ color: "var(--foreground-muted)" }}>Biaya Layanan Platform</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                    <span className="font-bold text-emerald-700 dark:text-emerald-500">
                       Gratis (Promo)
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span style={{ color: "var(--foreground-muted)" }}>Asuransi Perjalanan Transit</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                    <span className="font-bold text-emerald-700 dark:text-emerald-500">
                       Termasuk
                     </span>
                   </div>
@@ -604,7 +606,8 @@ function CheckoutContent() {
                 <button
                   onClick={handlePayNow}
                   disabled={isProcessing || (paymentMethod === "wallet" && !isWalletSufficient)}
-                  className="w-full py-4 px-4 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition disabled:opacity-50 cursor-pointer flex items-center justify-center space-x-2"
+                  className="w-full py-4 px-4 rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition disabled:opacity-50 cursor-pointer flex items-center justify-center space-x-2"
+                  style={{ background: "var(--foreground)", color: "var(--background)" }}
                 >
                   {isProcessing ? (
                     <>
@@ -634,8 +637,8 @@ function CheckoutContent() {
             </div>
           </div>
         ) : (
-          /* Payment Success State */
           <div className="max-w-xl mx-auto py-6 animate-fadeIn">
+            {/* Tampilan konfirmasi ketika pembayaran tiket telah berhasil */}
             <div
               className="p-8 rounded-3xl border shadow-2xl text-center space-y-6"
               style={{ background: "var(--surface)", borderColor: "var(--border)" }}
@@ -662,7 +665,7 @@ function CheckoutContent() {
               >
                 <div className="flex items-center justify-between pb-3 border-b text-xs font-bold" style={{ borderColor: "var(--border)" }}>
                   <span style={{ color: "var(--foreground-muted)" }}>Nomor Tiket:</span>
-                  <span className="font-mono text-sm tracking-wide text-emerald-600 dark:text-emerald-400">
+                  <span className="font-mono text-sm tracking-wide text-emerald-700 dark:text-emerald-500">
                     {issuedTicketId}
                   </span>
                 </div>
@@ -679,7 +682,7 @@ function CheckoutContent() {
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] uppercase font-bold" style={{ color: "var(--foreground-muted)" }}>Total Lunas</p>
-                    <p className="font-bold text-sm text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    <p className="font-bold text-sm text-emerald-700 dark:text-emerald-500 mt-0.5">
                       Rp {totalAmount.toLocaleString("id-ID")}
                     </p>
                     <p className="text-[11px]" style={{ color: "var(--foreground-muted)" }}>{passengerCount} Penumpang</p>
@@ -688,7 +691,7 @@ function CheckoutContent() {
 
                 <div className="pt-2 border-t flex items-center justify-between text-[11px]" style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}>
                   <span>Berlaku s/d: 4 Jam ke depan</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  <span className="text-emerald-700 dark:text-emerald-500 font-bold">
                     Siap Tap-In
                   </span>
                 </div>
@@ -698,7 +701,8 @@ function CheckoutContent() {
               <div className="space-y-3 pt-2">
                 <button
                   onClick={() => setShowBoardingPassModal(true)}
-                  className="w-full py-4 px-4 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                  className="w-full py-4 px-4 rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                  style={{ background: "var(--foreground)", color: "var(--background)" }}
                 >
                   <Ticket className="w-4 h-4" />
                   <span>Buka QR Boarding Pass (Scan Tap-In)</span>
@@ -710,7 +714,8 @@ function CheckoutContent() {
                       sessionStorage.setItem("urbanride-start-journey", selectedRoute.id);
                       router.push("/");
                     }}
-                    className="py-3 px-4 rounded-xl border font-bold text-xs bg-black text-white dark:bg-white dark:text-black hover:opacity-90 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-md"
+                    className="py-3 px-4 rounded-xl border font-bold text-xs hover:opacity-90 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-md"
+                    style={{ background: "var(--foreground)", color: "var(--background)", borderColor: "var(--foreground)" }}
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
                     <span>Mulai Live Tracking</span>

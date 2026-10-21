@@ -14,6 +14,7 @@ interface RouteListProps {
   onBackToSearch?: () => void;
 }
 
+// Komponen daftar hasil pencarian rute perjalanan
 export default function RouteList({
   routes,
   selectedRouteId,
@@ -23,11 +24,13 @@ export default function RouteList({
 }: RouteListProps) {
   const [activeSort, setActiveSort] = useState<"ALL" | "RECOMMENDED" | "FASTEST" | "CHEAPEST">("ALL");
 
+  // Memfilter rute sesuai tab pengurutan yang aktif
   const filteredRoutes = routes.filter((r) => {
     if (activeSort === "ALL") return true;
     return r.badge === activeSort;
   });
 
+  // Pilihan tab filter rute (Semua, Rekomendasi, Tercepat, Termurah)
   const sortTabs = [
     { id: "ALL",         label: "All Routes",    activeClass: "bg-gray-900 text-white" },
     { id: "RECOMMENDED", label: "Recommended",   activeClass: "" },
@@ -61,7 +64,7 @@ export default function RouteList({
         </div>
       </div>
 
-      {/* Sort Tabs */}
+      {/* Bilah tombol filter kategori rute */}
       <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
         {sortTabs.map((tab) => (
           <button
@@ -83,7 +86,7 @@ export default function RouteList({
         ))}
       </div>
 
-      {/* Route Cards or Empty State */}
+      {/* Menampilkan daftar kartu rute atau tampilan kosong jika tidak ada rute */}
       <div className="space-y-3.5 pt-1 pb-2">
         {filteredRoutes.length > 0 ? (
           filteredRoutes.map((route) => (

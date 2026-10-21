@@ -1,5 +1,6 @@
 "use client";
 
+// Komponen kartu login/register dengan animasi transisi antara mode
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
@@ -41,6 +42,7 @@ export default function AuthCard({
   const isRegister = mode === "register";
   const isRegisterContent = contentMode === "register";
 
+  // Toggle antara mode login dan register dengan animasi fade
   const handleToggleMode = (newMode: "login" | "register") => {
     if (newMode === mode) return;
     setIsFading(true);
@@ -58,6 +60,7 @@ export default function AuthCard({
     }, 220);
   };
 
+  // Login cepat via akun sosial (Google, Apple, dll)
   const handleSocialLogin = (provider: string) => {
     setIsLoading(true);
     setTimeout(() => {
@@ -73,6 +76,7 @@ export default function AuthCard({
     }, 400);
   };
 
+  // Submit form login/register dan arahkan pengguna ke halaman sebelumnya
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -97,7 +101,7 @@ export default function AuthCard({
 
   return (
     <div className="relative w-full max-w-[960px] mx-auto bg-white rounded-[32px] p-4 sm:p-5 shadow-[0_30px_70px_-15px_rgba(79,70,229,0.18),0_10px_25px_-5px_rgba(0,0,0,0.06)] border border-gray-100 transition-all overflow-hidden">
-      {/* Optional Close Button for Modal */}
+      {/* Tombol tutup (hanya tampil jika AuthCard dipakai sebagai modal) */}
       {isModal && onClose && (
         <button
           onClick={onClose}
@@ -155,7 +159,7 @@ export default function AuthCard({
             <h2 className="text-2xl sm:text-[28px] font-bold font-display text-white leading-snug tracking-tight drop-shadow-sm">
               {isRegisterContent
                 ? "Join UrbanRide for smart city transit and live navigation"
-                : "Get access your personal hub for clarity and productivity"}
+                : "Welcome back! Log in to UrbanRide for smart city transit and live navigation."}
             </h2>
           </div>
         </div>

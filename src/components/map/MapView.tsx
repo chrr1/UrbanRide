@@ -32,25 +32,25 @@ export default function MapView({
   const markersRef = useRef<L.LayerGroup | null>(null);
   const polylinesRef = useRef<L.Polyline[]>([]);
 
-  // Initialize Map
+  // Inisialisasi peta Leaflet dan canvas utama
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    // Center around Jakarta/City Center coordinates
+    // Menentukan titik tengah peta (koordinat Jakarta Pusat)
     const map = L.map(mapContainerRef.current, {
       center: [-6.1980, 106.8280],
       zoom: 13,
       zoomControl: false,
     });
 
-    // Add Tile Layer from configured provider (Default: OpenStreetMap Standard - 100% Free, No Watermark)
+    // Mengambil tile peta dasar dari OpenStreetMap
     const currentProvider = MAP_PROVIDERS.openStreetMap;
     L.tileLayer(currentProvider.url, {
       attribution: currentProvider.attribution,
       maxZoom: currentProvider.maxZoom,
     }).addTo(map);
 
-    // Zoom control at bottom right
+    // Kontrol zoom peta di pojok kanan bawah
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
     const layerGroup = L.layerGroup().addTo(map);
@@ -115,7 +115,7 @@ export default function MapView({
       });
     };
 
-    // 1. Render all city stations
+    // Menampilkan semua stasiun/halte kota ke peta
     locations.forEach((loc) => {
       bounds.push([loc.latitude, loc.longitude]);
 
@@ -167,15 +167,17 @@ export default function MapView({
       layerGroup.addLayer(marker);
     });
 
-    // 2. Render Selected Route Polylines & Vehicle
+    // Menggambar garis jalur rute perjalanan terpilih
     if (selectedRoute && selectedRoute.polylineCoordinates.length > 0) {
       const stops = selectedRoute.stops;
 
+      // Fungsi menggambar garis latar dan garis utama rute
       const drawRouteLines = (coords: [number, number][]) => {
         // Clear previous polylines
         polylinesRef.current.forEach((pl) => pl.remove());
         polylinesRef.current = [];
 
+        // Garis latar bayangan rute
         const bgLine = L.polyline(coords, {
           color: "#94a3b8",
           weight: 6,
@@ -183,6 +185,7 @@ export default function MapView({
           lineCap: "round",
         });
 
+        // Garis jalur utama rute
         const mainLine = L.polyline(coords, {
           color: "#111111",
           weight: 5,
@@ -196,10 +199,10 @@ export default function MapView({
         polylinesRef.current.push(bgLine, mainLine);
       };
 
-      // Draw initial fallback (straight line)
+      // Menggambar jalur awal garis rute
       drawRouteLines(selectedRoute.polylineCoordinates);
 
-      // Fetch actual street/road geometry from OSRM Routing API
+      // Mengambil API rute jalan raya dari OSRM
       if (stops && stops.length >= 2) {
         const coordParam = stops.map((s) => `${s.longitude},${s.latitude}`).join(";");
         const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${coordParam}?overview=full&geometries=geojson`;
@@ -220,11 +223,11 @@ export default function MapView({
             }
           })
           .catch(() => {
-            // Keep fallback straight lines if OSRM is unreachable
+            // Tetap menggunakan garis awal jika API OSRM tidak terjangkau
           });
       }
 
-      // Add stops along the route — inline styles only
+      // Menampilkan marker halte/stasiun di sepanjang rute
       selectedRoute.stops.forEach((stop, idx) => {
         const isPassed = activeJourneyMode && idx < activeStopIndex;
         const isCurrent = activeJourneyMode && idx === activeStopIndex;
@@ -245,7 +248,7 @@ export default function MapView({
       });
     }
 
-    // 3. Render Live Vehicle Marker — inline styles only
+    // Menampilkan marker posisi armada kendaraan secara realtime
     const veh = activeVehicle || selectedRoute?.vehicle;
     if (veh) {
       const statusBg = veh.status === "delayed" ? "#f59e0b" : "#10b981";
@@ -285,7 +288,7 @@ export default function MapView({
       layerGroup.addLayer(vehMarker);
     }
 
-    // Fit map bounds smoothly
+    // Mengatur sudut pandang kamera peta agar seluruh rute terlihat penuh
     if (bounds.length > 0) {
       map.fitBounds(L.latLngBounds(bounds), { padding: [80, 80], maxZoom: 15 });
     }
@@ -296,7 +299,7 @@ export default function MapView({
   return (
     <div className="relative w-full h-full min-h-[500px]">
 
-      {/* Floating Mode Filter Bar — TOP CENTER */}
+      {/* Bar filter moda transportasi (Semua, Bus, Kereta) di atas peta */}
       <div
         className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1.5 p-1.5 backdrop-blur-md rounded-full shadow-lg border select-none"
         style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}

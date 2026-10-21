@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Sign in or create an account for UrbanRide Smart City Transit Platform.",
 };
 
+// Halaman masuk (login) akun pengguna UrbanRide
 export default function LoginPage() {
   return (
     <div
@@ -17,7 +18,7 @@ export default function LoginPage() {
         `,
       }}
     >
-      {/* The Centered Auth Card */}
+      {/* Kartu formulir autentikasi pengguna (mode login) */}
       <AuthCard initialMode="login" />
     </div>
   );

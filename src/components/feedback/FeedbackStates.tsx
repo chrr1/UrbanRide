@@ -1,5 +1,6 @@
 "use client";
 
+// Komponen feedback UI: loading skeleton, empty state, error state, dan toast sukses
 import { useEffect, useState } from "react";
 import { AlertTriangle, MapPinOff, RefreshCw, CheckCircle2, X } from "lucide-react";
 
@@ -44,7 +45,8 @@ export function EmptyState({
       </p>
       <button
         onClick={onReset}
-        className="py-2.5 px-4 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-xl shadow-md hover:opacity-90 active:scale-95 transition cursor-pointer"
+        className="py-2.5 px-4 text-xs font-bold rounded-xl shadow-md hover:opacity-90 active:scale-95 transition cursor-pointer"
+        style={{ background: "var(--foreground)", color: "var(--background)" }}
       >
         {buttonText}
       </button>
@@ -69,7 +71,8 @@ export function ErrorState({ onRetry }: { onRetry: () => void }) {
       </p>
       <button
         onClick={onRetry}
-        className="py-2.5 px-4 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-xl shadow-md hover:opacity-90 transition inline-flex items-center space-x-1.5 cursor-pointer"
+        className="py-2.5 px-4 text-xs font-bold rounded-xl shadow-md hover:opacity-90 transition inline-flex items-center space-x-1.5 cursor-pointer"
+        style={{ background: "var(--foreground)", color: "var(--background)" }}
       >
         <RefreshCw className="w-3.5 h-3.5" />
         <span>Try Again</span>
@@ -78,8 +81,9 @@ export function ErrorState({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-const TOAST_DURATION = 5000; // ms
+const TOAST_DURATION = 5000; // Durasi toast notifikasi (ms)
 
+// Komponen toast sukses dengan progress bar yang hilang otomatis
 export function SuccessToast({ message, onClose }: { message: string; onClose: () => void }) {
   const [visible, setVisible] = useState(true);
   const [progress, setProgress] = useState(100);

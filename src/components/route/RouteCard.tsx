@@ -9,11 +9,13 @@ interface RouteCardProps {
   onSelect: (route: RouteOption) => void;
 }
 
+// Komponen kartu ringkasan satu pilihan rute perjalanan
 export default function RouteCard({
   route,
   isSelected = false,
   onSelect,
 }: RouteCardProps) {
+  // Menentukan warna badge rute (Tercepat, Termurah, Rekomendasi)
   const getBadgeStyle = (badge: RouteOption["badge"]) => {
     switch (badge) {
       case "FASTEST":
@@ -34,6 +36,7 @@ export default function RouteCard({
     return {};
   };
 
+  // Menentukan icon moda transportasi (Bus, Kereta, atau Jalan Kaki)
   const getVehicleIcon = (type: string, className = "w-4 h-4") => {
     if (type === "train") {
       return <Train className={`${className} text-sky-500`} />;
@@ -64,12 +67,12 @@ export default function RouteCard({
   const originName = route.legs[0]?.fromName || "Start";
   const destinationName = route.legs[route.legs.length - 1]?.toName || "Destination";
 
+  // Kontainer kartu rute interaktif dengan aksi klik untuk memilih rute
   return (
     <div
       onClick={() => onSelect(route)}
-      className={`group relative rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 hover:-translate-y-0.5 overflow-hidden ${
-        isSelected ? "shadow-lg" : "shadow-xs opacity-90 hover:opacity-100"
-      }`}
+      className={`group relative rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 hover:-translate-y-0.5 overflow-hidden ${isSelected ? "shadow-lg" : "shadow-xs opacity-90 hover:opacity-100"
+        }`}
       style={{
         background: "var(--card-bg)",
         borderColor: "var(--foreground)",

@@ -14,7 +14,7 @@ import HistoryView from "@/components/history/HistoryView";
 import QuickStatsBar from "@/components/home/QuickStatsBar";
 import { SuccessToast } from "@/components/feedback/FeedbackStates";
 import { LOCATIONS, MOCK_ROUTES, LocationItem, RouteOption } from "@/data/mockData";
-import { Bus, Train, MapPin, Sparkles, Navigation, Layers, X, Search, ArrowLeft, Ticket, History, CheckCircle2, QrCode, Play, AlertCircle, ShoppingBag, RotateCcw } from "lucide-react";
+import { Bus, Train, MapPin, Sparkles, Navigation, Layers, X, Search, ArrowLeft, Ticket, History, CheckCircle2, QrCode, Play, AlertCircle, ShoppingBag, RotateCcw, List } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTicket } from "@/context/TicketContext";
 import AuthPromptModal from "@/components/auth/AuthPromptModal";
@@ -31,6 +31,7 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
   ),
 });
 
+// Komponen utama halaman aplikasi UrbanRide
 export default function Home() {
   const router = useRouter();
   const { isLoggedIn, login } = useAuth();
@@ -108,8 +109,27 @@ export default function Home() {
 
   const handleTabChange = (tab: "map" | "ticket" | "history") => {
     setActiveTab(tab);
+    if (tab !== "map") {
+      setIsSearchModalOpen(false);
+    }
     if (tab === "map" && viewMode === "results") setViewMode("search");
   };
+
+  // Real-time journey simulation timer across desktop and mobile
+  useEffect(() => {
+    if (viewMode !== "journey") return;
+    const stopsCount = selectedRoute.stops.length;
+    if (activeStopIndex >= stopsCount - 1) return;
+
+    const timer = setInterval(() => {
+      setActiveStopIndex((prev) => {
+        const next = Math.min(prev + 1, stopsCount - 1);
+        return next;
+      });
+    }, 7000);
+
+    return () => clearInterval(timer);
+  }, [viewMode, activeStopIndex, selectedRoute.stops.length]);
 
   const handleViewTicket = () => {
     if (!isLoggedIn) {
@@ -223,19 +243,19 @@ export default function Home() {
       {/* Main Workspace Layout */}
       <main className="flex-1 min-h-0 max-w-[1540px] w-full mx-auto px-4 sm:px-8 py-1.5 sm:py-2 space-y-2.5 overflow-hidden flex flex-col">
 
-        {/* Quick System Stats Cards Top Placement */}
+        {/* Baris kartu ringkasan statistik sistem transit di atas peta */}
         {activeTab === "map" && (
           <QuickStatsBar />
         )}
 
-        {/* Hero Section & Map Dashboard */}
+        {/* Dashboard peta dan panel navigasi */}
         {activeTab === "map" && (
           <div
             className="relative w-full flex-1 min-h-0 rounded-3xl overflow-hidden shadow-sm border flex flex-col md:flex-row"
             style={{ background: "var(--surface)", borderColor: "var(--border)" }}
           >
 
-            {/* Left Sidebar Control Panel (DESKTOP ONLY - Always Visible Side-by-Side) */}
+            {/* Sidebar kontrol pencarian, rute, dan live tracking di layar desktop */}
             <div
               className="hidden md:flex md:w-[400px] lg:w-[440px] p-5 z-20 overflow-y-auto overflow-x-hidden max-h-full backdrop-blur-md border-r flex-col space-y-4 shrink-0"
               style={{ background: "var(--sidebar-bg)", borderColor: "var(--border)" }}
@@ -296,7 +316,7 @@ export default function Home() {
               )}
             </div>
 
-            {/* Map Canvas (Full Width on Mobile, 70% Right on Desktop) */}
+            {/* Canvas tampilan peta interaktif Leaflet */}
             <div className="relative flex-1 h-full w-full bg-gray-100 z-0">
               <MapView
                 selectedRoute={selectedRoute}
@@ -313,27 +333,67 @@ export default function Home() {
                 }}
               />
 
-              {/* Mobile Only Floating Top Search Bar (md:hidden) */}
-              <div className="md:hidden absolute top-4 left-4 right-4 z-20">
-                <div
-                  onClick={() => setIsSearchModalOpen(true)}
-                  className="glass-panel p-3.5 rounded-2xl shadow-xl border border-gray-200/90 cursor-pointer hover:border-black transition-all flex items-center justify-between group active:scale-98 bg-white/95 backdrop-blur-md"
-                >
-                  <div className="flex items-center space-x-3 overflow-hidden">
-                    <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center shrink-0 shadow-md">
-                      <Search className="w-4 h-4" style={{ color: "var(--foreground-muted)" }} />
+              {/* Mobile Only Floating Top Bar (md:hidden) */}
+              <div className="md:hidden absolute top-3 left-3 right-3 z-20">
+                {viewMode === "journey" ? (
+                  <div
+                    onClick={() => setIsSearchModalOpen(true)}
+                    className="p-3 rounded-2xl shadow-xl border cursor-pointer backdrop-blur-md transition-all flex items-center justify-between"
+                    style={{ background: "var(--panel-bg)", borderColor: "var(--border)", color: "var(--foreground)" }}
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style={{ background: "var(--foreground)", color: "var(--background)" }}>
+                        <Bus className="w-4 h-4 animate-pulse" />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <div className="flex items-center space-x-1.5">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                            Live Tracking • #{selectedRoute.vehicle.code}
+                          </span>
+                        </div>
+                        <span className="text-xs font-black truncate" style={{ color: "var(--foreground)" }}>
+                          {selectedRoute.vehicle.name} (#{selectedRoute.vehicle.code})
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col truncate">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Mau pergi ke mana?</span>
-                      <span className="text-xs font-bold text-gray-900 truncate">
-                        {origin.name.split(" ")[0]} ➔ {destination.name.split(" ")[0]}
-                      </span>
-                    </div>
+                    <span
+                      className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold shrink-0 border transition shadow-sm ml-2"
+                      style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--foreground)" }}
+                    >
+                      Buka Rute
+                    </span>
                   </div>
-                  <span className="px-3.5 py-2 bg-black text-white text-xs font-bold rounded-xl shrink-0 group-hover:bg-gray-800 transition shadow-md flex items-center space-x-1">
-                    <span>Cari Rute</span>
-                  </span>
-                </div>
+                ) : (
+                  <div
+                    onClick={() => setIsSearchModalOpen(true)}
+                    className="p-2.5 sm:p-3 rounded-2xl shadow-xl border cursor-pointer hover:border-black transition-all flex items-center justify-between group active:scale-98 backdrop-blur-md"
+                    style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
+                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style={{ background: "var(--foreground)", color: "var(--background)" }}>
+                        <Search className="w-4 h-4" />
+                      </div>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
+                          Rute Perjalanan
+                        </span>
+                        <span className="text-xs font-bold truncate" style={{ color: "var(--foreground)" }}>
+                          {origin.name.split(" ")[0]} ➔ {destination.name.split(" ")[0]}
+                        </span>
+                      </div>
+                    </div>
+                    <span
+                      className="px-3 py-1.5 text-xs font-bold rounded-xl shrink-0 transition shadow-sm flex items-center space-x-1"
+                      style={{ background: "var(--foreground)", color: "var(--background)" }}
+                    >
+                      <span>Cari Rute</span>
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Floating Vehicle Tracking Card (Top Right Desktop/Mobile) */}
@@ -369,7 +429,7 @@ export default function Home() {
                         setViewMode("journey");
                         setActiveTab("map");
                       }}
-                      className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all hover:scale-[1.02] shadow-sm border"
+                      className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all hover:scale-[1.02] shadow-sm border cursor-pointer"
                       style={{ background: "var(--foreground)", color: "var(--background)", borderColor: "rgba(255,255,255,0.1)" }}
                     >
                       View Trip
@@ -377,6 +437,67 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+
+              {/* Mobile Floating Live Journey Card (md:hidden - positioned safely above bottom nav: bottom-20) */}
+              {viewMode === "journey" && (
+                <div className="md:hidden absolute bottom-20 left-3 right-3 z-30 animate-fadeIn">
+                  <div
+                    className="p-3.5 rounded-2xl shadow-2xl backdrop-blur-md border space-y-2.5"
+                    style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 min-w-0">
+                        <span className="relative flex h-2.5 w-2.5 shrink-0">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
+                            Berikutnya ({Math.min(activeStopIndex + 1, selectedRoute.stops.length)}/{selectedRoute.stops.length})
+                          </p>
+                          <p className="text-xs font-black truncate" style={{ color: "var(--foreground)" }}>
+                            {selectedRoute.stops[activeStopIndex]?.name || destination.name}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 shrink-0 ml-2">
+                        {selectedRoute.vehicle.estimatedArrivalNextStop}
+                      </span>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, Math.round(((activeStopIndex + 1) / selectedRoute.stops.length) * 100))}%`,
+                        }}
+                      />
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex items-center space-x-2 pt-0.5">
+                      <button
+                        onClick={() => setIsSearchModalOpen(true)}
+                        className="flex-1 py-2 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                        style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--foreground)" }}
+                      >
+                        <List className="w-3.5 h-3.5" />
+                        <span>Timeline Rute</span>
+                      </button>
+
+                      <button
+                        onClick={handleEndJourney}
+                        className="flex-1 py-2 px-3 rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                        style={{ background: "var(--foreground)", color: "var(--background)" }}
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Selesaikan</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Bottom Map Legend Pill */}
               <div
@@ -400,46 +521,61 @@ export default function Home() {
           >
             {/* Full Screen Header Bar */}
             <div
-              className="sticky top-0 z-10 backdrop-blur-md border-b px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-sm"
-              style={{ background: "var(--header-bg)", borderColor: "var(--border)" }}
+              className="sticky top-0 z-10 backdrop-blur-md border-b px-3.5 py-3 flex items-center justify-between shadow-sm shrink-0"
+              style={{ background: "var(--panel-bg)", borderColor: "var(--border)" }}
             >
+              {/* Left Action: Contextual Back / Close */}
               <button
-                onClick={() => setIsSearchModalOpen(false)}
-                className="flex items-center space-x-2 px-4 py-2 bg-black text-white hover:bg-gray-800 rounded-full font-bold text-xs shadow-md active:scale-95 transition"
+                onClick={() => {
+                  if (viewMode === "detail") {
+                    setViewMode("results");
+                  } else if (viewMode === "results") {
+                    setViewMode("search");
+                  } else {
+                    setIsSearchModalOpen(false);
+                  }
+                }}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold hover:opacity-80 active:scale-95 transition cursor-pointer shadow-xs shrink-0"
+                style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--foreground)" }}
+                aria-label="Kembali"
               >
-                <ArrowLeft className="w-4 h-4" style={{ color: "var(--foreground-muted)" }} />
-                <span>Kembali ke Peta</span>
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span className="text-[11px] font-bold">
+                  {viewMode === "detail" ? "Rute" : viewMode === "results" ? "Cari" : "Peta"}
+                </span>
               </button>
 
-              <div className="flex items-center space-x-2">
-                <Navigation className="w-4 h-4 hidden sm:block" style={{ color: "var(--foreground-muted)" }} />
-                <h3 className="font-bold text-gray-900 text-xs sm:text-sm uppercase tracking-wider">
-                  {viewMode === "search" ? "Pencarian Rute Perjalanan" : `${viewMode} Mode`}
+              {/* Center: Title & Context Subtitle */}
+              <div className="flex-1 text-center px-2 min-w-0">
+                <h3 className="font-bold text-xs sm:text-sm tracking-tight truncate" style={{ color: "var(--foreground)" }}>
+                  {viewMode === "search" && "Pencarian Rute"}
+                  {viewMode === "results" && "Pilihan Rute Perjalanan"}
+                  {viewMode === "detail" && selectedRoute.title}
+                  {viewMode === "journey" && "Live Tracking Perjalanan"}
                 </h3>
+                <p className="text-[10px] truncate" style={{ color: "var(--foreground-muted)" }}>
+                  {viewMode === "search" ? "Pilih stasiun asal & tujuan" : `Menuju ${destination.name}`}
+                </p>
               </div>
 
-              <div className="flex items-center space-x-2">
-                {viewMode !== "search" && (
-                  <button
-                    onClick={() => setViewMode("search")}
-                    className="text-xs text-gray-600 hover:text-black font-semibold underline mr-2"
-                  >
-                    Reset Search
-                  </button>
-                )}
-                <button
-                  onClick={() => setIsSearchModalOpen(false)}
-                  className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition"
-                  title="Tutup & Lihat Peta"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+              {/* Right Action: Close Button (Returns directly to Map) */}
+              <button
+                onClick={() => setIsSearchModalOpen(false)}
+                className="w-8 h-8 rounded-full border flex items-center justify-center transition active:scale-95 cursor-pointer shadow-xs shrink-0"
+                style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--foreground)" }}
+                title="Tutup & Lihat Peta"
+                aria-label="Tutup & Lihat Peta"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             {/* Full Screen Page Content Container */}
-            <div className="max-w-3xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-6">
-              <div className="glass-panel p-5 sm:p-7 rounded-3xl shadow-xl border border-gray-200 bg-white">
+            <div className="max-w-3xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-6 pb-28 sm:pb-8">
+              <div
+                className="p-5 sm:p-7 rounded-3xl shadow-xl border backdrop-blur-md"
+                style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+              >
                 {/* Step 1: Search Form */}
                 {viewMode === "search" && (
                   <SearchPanel
@@ -510,7 +646,8 @@ export default function Home() {
                 sessionStorage.setItem("urbanride-active-tab", "ticket");
                 router.push("/login");
               }}
-              className="px-6 py-3 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
+              className="px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
+              style={{ background: "var(--foreground)", color: "var(--background)" }}
             >
               Masuk Sekarang
             </button>
@@ -519,7 +656,7 @@ export default function Home() {
 
         {/* Ticket Tab View (Logged In) */}
         {activeTab === "ticket" && isLoggedIn && (
-          <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="flex-1 min-h-0 flex flex-col items-center justify-start sm:justify-center p-4 sm:p-6 overflow-y-auto pb-28 sm:pb-8">
             {!activeTicket ? (
               /* Empty State: Belum Ada Tiket */
               <div
@@ -544,15 +681,15 @@ export default function Home() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left text-xs">
                   <div className="p-3 rounded-2xl border" style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}>
-                    <p className="font-bold">⚡ Scan Cepat</p>
+                    <p className="font-bold">Scan Cepat</p>
                     <p className="text-[11px] text-gray-400 mt-1">Tap-in instan dengan QR code di gate stasiun.</p>
                   </div>
                   <div className="p-3 rounded-2xl border" style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}>
-                    <p className="font-bold">🛡️ Aman & Resmi</p>
+                    <p className="font-bold">Aman & Resmi</p>
                     <p className="text-[11px] text-gray-400 mt-1">Terintegrasi armada bus & metro kota.</p>
                   </div>
                   <div className="p-3 rounded-2xl border" style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}>
-                    <p className="font-bold">⏱️ Valid 4 Jam</p>
+                    <p className="font-bold">Valid 4 Jam</p>
                     <p className="text-[11px] text-gray-400 mt-1">Fleksibel digunakan sesuai jadwal Anda.</p>
                   </div>
                 </div>
@@ -562,7 +699,8 @@ export default function Home() {
                     setActiveTab("map");
                     setViewMode("search");
                   }}
-                  className="w-full py-4 px-6 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                  className="w-full py-4 px-6 rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                  style={{ background: "var(--foreground)", color: "var(--background)" }}
                 >
                   <Search className="w-4 h-4" />
                   <span>Cari Rute & Beli Tiket Sekarang</span>
@@ -640,7 +778,8 @@ export default function Home() {
                 <div className="space-y-2.5 pt-1">
                   <button
                     onClick={() => setShowTicketModal(true)}
-                    className="w-full py-4 px-4 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                    className="w-full py-4 px-4 rounded-2xl font-bold text-sm shadow-xl hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+                    style={{ background: "var(--foreground)", color: "var(--background)" }}
                   >
                     <QrCode className="w-4 h-4" />
                     <span>Tampilkan QR Boarding Pass</span>
@@ -709,7 +848,8 @@ export default function Home() {
                 sessionStorage.setItem("urbanride-active-tab", "history");
                 router.push("/login");
               }}
-              className="px-6 py-3 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
+              className="px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition cursor-pointer"
+              style={{ background: "var(--foreground)", color: "var(--background)" }}
             >
               Masuk Sekarang
             </button>
@@ -762,11 +902,13 @@ export default function Home() {
         }}
       />
 
-      {/* Mobile Bottom Navigation */}
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      {/* Mobile Bottom Navigation - Only visible on base screens, hidden when modals/overlays are open */}
+      {!isSearchModalOpen && !showTicketModal && !showAuthModal && !showCompletedModal && (
+        <BottomNavigation
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+        />
+      )}
     </div>
   );
 }

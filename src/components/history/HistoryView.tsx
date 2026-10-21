@@ -41,6 +41,7 @@ const TRIP_TIMES: Record<string, { dep: string; arr: string; platform: string }>
   "hist-3": { dep: "18:05", arr: "18:24", platform: "Track 1" },
 };
 
+// Komponen halaman riwayat perjalanan dan arsip boarding pass pengguna
 export default function HistoryView({ onRebookRoute, onViewTicketModal }: HistoryViewProps) {
   const { history: contextHistory } = useTicket();
   // Use contextHistory directly — TicketContext already handles per-user scoping and
@@ -86,7 +87,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
               </div>
             </div>
 
-            {/* Quick Metrics */}
+            {/* Kartu statistik ringkasan total perjalanan dan pengeluaran ongkos */}
             <div className="grid grid-cols-2 gap-2.5 pt-2">
               <div
                 className="p-3 rounded-xl border shadow-2xs text-left"
@@ -119,7 +120,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
               </div>
             </div>
 
-            {/* Active Pass Callout */}
+            {/* Informasi tiket aktif yang siap digunakan untuk tap-in */}
             <div
               className="p-3.5 rounded-xl border shadow-2xs flex items-center justify-between text-xs"
               style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
@@ -144,7 +145,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
               </button>
             </div>
 
-            {/* Filter Navigation */}
+            {/* Tombol filter riwayat perjalanan (Semua, Bus, Kereta) */}
             <div className="space-y-1.5 pt-1">
               <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
                 Filter by Category
@@ -195,7 +196,7 @@ export default function HistoryView({ onRebookRoute, onViewTicketModal }: Histor
           </div>
         </aside>
 
-        {/* === RIGHT COLUMN: Digital Boarding Pass Cards (lg:col-span-8) === */}
+        {/* Daftar kartu tiket riwayat perjalanan digital */}
         <main className="lg:col-span-8 space-y-4 lg:h-full lg:overflow-y-auto lg:pr-2 min-h-0 pb-6">
           {filteredHistory.map((item: TripHistoryItem) => {
             const formattedFare = `Rp ${item.fare.toLocaleString("id-ID")}`;
