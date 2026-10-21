@@ -1,5 +1,6 @@
 "use client";
 
+// Konteks autentikasi global untuk menyimpan status login pengguna
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 export interface UserProfile {
@@ -27,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
+    // Periksa status login dari localStorage saat aplikasi dimuat
     const saved = localStorage.getItem("urbanride-auth");
     if (saved) {
       try {
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Fungsi login: simpan profil pengguna ke state dan localStorage
   const login = (email: string = "chrs@gmail.com", name: string = "Mahasiswa") => {
     const profile: UserProfile = {
       name: name.trim() || "Mahasiswa",
@@ -55,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  // Fungsi logout: hapus data pengguna dari state dan localStorage
   const logout = () => {
     setIsLoggedIn(false);
     setUser(null);

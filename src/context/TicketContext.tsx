@@ -1,5 +1,6 @@
 "use client";
 
+// Konteks tiket dan riwayat perjalanan pengguna, termasuk saldo dompet
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { RouteOption, TripHistoryItem, MOCK_HISTORY } from "@/data/mockData";
@@ -61,7 +62,7 @@ const LEGACY_TICKETS_KEY = "urbanride-tickets";
 const LEGACY_WALLET_KEY = "urbanride-wallet-balance";
 const LEGACY_HISTORY_KEY = "urbanride-history";
 
-// Per-user scoped storage keys
+// Kunci penyimpanan per-pengguna berdasarkan email
 function getTicketsKey(email: string) {
   return `urbanride-tickets_${email.toLowerCase()}`;
 }
@@ -79,7 +80,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
   const [history, setHistory] = useState<TripHistoryItem[]>(MOCK_HISTORY);
   const [walletBalance, setWalletBalance] = useState<number>(50000);
 
-  // Reactively load/clear data whenever auth state changes
+  // Muat atau hapus data pengguna setiap kali status login berubah
   useEffect(() => {
     if (!isLoggedIn || !user?.email) {
       // Guest: clear all in-memory state immediately
@@ -148,7 +149,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
     }
   }, [isLoggedIn, user?.email]);
 
-  // Save tickets to user-scoped localStorage
+  // Simpan daftar tiket ke localStorage sesuai akun pengguna
   const saveTickets = (newTickets: PurchasedTicket[]) => {
     setTickets(newTickets);
     if (!isLoggedIn || !user?.email) return;
@@ -170,7 +171,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Save wallet balance to user-scoped localStorage
+  // Simpan saldo dompet ke localStorage sesuai akun pengguna
   const updateWallet = (newBalance: number) => {
     const val = Math.max(0, newBalance);
     setWalletBalance(val);
@@ -197,7 +198,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
       status: "active",
     };
 
-    // If paid using UrbanRide Wallet, deduct balance
+    // Kurangi saldo dompet jika pembayaran menggunakan UrbanRide Wallet
     if (data.paymentMethod.toLowerCase().includes("wallet")) {
       updateWallet(walletBalance - data.fare);
     }

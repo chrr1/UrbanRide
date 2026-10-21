@@ -1,5 +1,6 @@
 "use client";
 
+// Konteks tema (light/dark) yang tersimpan di localStorage
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 type Theme = "light" | "dark";
@@ -22,10 +23,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem("urbanride-theme") as Theme | null;
     const resolved: Theme = stored === "dark" ? "dark" : "light";
     setTheme(resolved);
-    // Critical: always set the attribute so CSS selectors work
+    // Terapkan atribut data-theme ke elemen html agar CSS bekerja
     document.documentElement.setAttribute("data-theme", resolved);
   }, []);
 
+  // Fungsi toggle tema: ganti antara light dan dark, lalu simpan ke localStorage
   const toggleTheme = () => {
     setTheme((prev) => {
       const next: Theme = prev === "light" ? "dark" : "light";

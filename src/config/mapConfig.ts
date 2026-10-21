@@ -1,4 +1,4 @@
-// Configuration for Map Tile Providers & APIs in UrbanRide
+// Konfigurasi penyedia tile peta dan API eksternal yang digunakan UrbanRide
 
 export interface MapProviderConfig {
   name: string;
@@ -50,7 +50,7 @@ export const MAP_PROVIDERS: Record<string, MapProviderConfig> = {
   },
 };
 
-// External APIs
+// API eksternal: routing OSRM dan geocoding Nominatim
 export const EXTERNAL_APIS = {
   osrmRoutingApi: "https://router.project-osrm.org/route/v1/driving",
   nominatimGeocodingApi: "https://nominatim.openstreetmap.org/search",

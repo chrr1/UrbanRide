@@ -1,3 +1,4 @@
+// Data tiruan: lokasi, rute, kendaraan, dan riwayat perjalanan untuk tampilan demo
 export interface LocationItem {
   id: string;
   name: string;
