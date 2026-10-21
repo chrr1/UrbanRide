@@ -11,6 +11,7 @@ interface LiveNavigationPanelProps {
   onStopIndexChange: (index: number) => void;
 }
 
+// Komponen panel kontrol navigasi dan pelacakan live armada perjalanan
 export default function LiveNavigationPanel({
   route,
   onEndJourney,
@@ -27,7 +28,7 @@ export default function LiveNavigationPanel({
   const remainingStops = Math.max(0, stops.length - 1 - currentStopIndex);
   const isCompleted = currentStopIndex >= stops.length - 1;
 
-  // Real-time interval simulation
+  // Simulasi interval pergerakan bus ke halte berikutnya secara realtime
   useEffect(() => {
     if (!isSimulating || isCompleted) return;
 
@@ -65,7 +66,7 @@ export default function LiveNavigationPanel({
       {/* Background ambient glow */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/20 blur-[60px] rounded-full pointer-events-none overflow-hidden" />
 
-      {/* Top Banner */}
+      {/* Banner status live tracking dan tombol jeda/lanjutkan simulasi */}
       <div className="flex items-center justify-between pb-2.5 border-b" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center space-x-2">
           <span className="w-2 h-2 rounded-full animate-ping" style={{ background: "var(--accent-cyber-lime)", boxShadow: "0 0 8px var(--accent-cyber-lime)" }} />
@@ -96,7 +97,7 @@ export default function LiveNavigationPanel({
         </button>
       </div>
 
-      {/* Vehicle Info Header */}
+      {/* Informasi armada bus/kereta, nama pengemudi, dan tombol lihat tiket */}
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center space-x-2">
@@ -125,7 +126,7 @@ export default function LiveNavigationPanel({
         </button>
       </div>
 
-      {/* Journey Progress Timeline */}
+      {/* Indikator progress bar perjalanan dan posisi stasiun saat ini */}
       <div className="py-1">
         <div className="flex items-center justify-between mb-1.5 text-[10.5px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground-muted)" }}>
           <span>{stops[0]?.name}</span>
@@ -199,7 +200,7 @@ export default function LiveNavigationPanel({
         </div>
       </div>
 
-      {/* Actions */}
+      {/* Tombol simulasi manual perhentian dan tombol selesaikan perjalanan */}
       <div className="flex items-center space-x-2">
         {!isCompleted && (
           <button

@@ -10,6 +10,7 @@ interface TripCompletedModalProps {
   onViewHistory: () => void;
 }
 
+// Komponen modal perayaan kedatangan saat perjalanan telah selesai
 export default function TripCompletedModal({
   isOpen,
   route,
@@ -29,7 +30,7 @@ export default function TripCompletedModal({
         className="relative w-full max-w-md rounded-3xl p-6 sm:p-7 border shadow-2xl space-y-5 animate-scaleUp transition-all"
         style={{ background: "var(--surface)", borderColor: "var(--border)" }}
       >
-        {/* Top Bar: Transit Code & Close Button */}
+        {/* Bar atas modal dengan kode armada dan tombol tutup */}
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center shadow-xs">
@@ -55,9 +56,9 @@ export default function TripCompletedModal({
           </button>
         </div>
 
-        {/* Arrival Hero (Clean & Direct, No Squircle Slop, No Dot) */}
+        {/* Judul status kedatangan dan nama stasiun tujuan akhir */}
         <div className="space-y-1">
-          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block">
+          <span className="text-xs font-bold text-black-600 dark:text-white-400 block">
             Perjalanan Selesai Tepat Waktu
           </span>
           <h2 className="text-2xl font-black font-display tracking-tight" style={{ color: "var(--foreground)" }}>
@@ -68,7 +69,7 @@ export default function TripCompletedModal({
           </p>
         </div>
 
-        {/* Trip Receipt Card */}
+        {/* Kartu tanda terima ringkasan perjalanan (asal, tujuan, ongkos, dan emisi CO2) */}
         <div
           className="rounded-2xl border overflow-hidden"
           style={{ background: "var(--surface-secondary)", borderColor: "var(--border)" }}
@@ -128,16 +129,17 @@ export default function TripCompletedModal({
             </div>
             <div className="px-2">
               <span className="text-[10px] block" style={{ color: "var(--foreground-muted)" }}>Hemat Emisi</span>
-              <p className="font-bold text-sm text-emerald-600 dark:text-emerald-400 mt-0.5">~1.4 kg CO₂</p>
+              <p className="font-bold text-sm text-emerald-700 dark:text-emerald-500 mt-0.5">~1.4 kg CO₂</p>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Tombol untuk melihat riwayat perjalanan atau kembali ke peta */}
         <div className="space-y-2 pt-1">
           <button
             onClick={onViewHistory}
-            className="w-full py-3.5 px-4 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-xs sm:text-sm shadow-lg hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+            className="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm shadow-lg hover:opacity-90 active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2"
+            style={{ background: "var(--foreground)", color: "var(--background)" }}
           >
             <History className="w-4 h-4" />
             <span>Lihat Riwayat Perjalanan</span>

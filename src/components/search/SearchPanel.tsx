@@ -11,6 +11,7 @@ interface SearchPanelProps {
   isLoading?: boolean;
 }
 
+// Komponen panel formulir pencarian rute perjalanan
 export default function SearchPanel({
   onSearch,
   selectedFrom,
@@ -63,6 +64,7 @@ export default function SearchPanel({
       loc.address.toLowerCase().includes(toSearchInput.toLowerCase())
   );
 
+  // Fungsi menukar posisi stasiun asal dan stasiun tujuan
   const handleSwap = () => {
     if (toLocation) {
       const prevFrom = fromLocation;
@@ -78,6 +80,7 @@ export default function SearchPanel({
     }
   };
 
+  // Fungsi submit untuk memproses dan mencari rute
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!toLocation) return;
@@ -136,7 +139,7 @@ export default function SearchPanel({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3">
-        {/* From Input & Dropdown */}
+        {/* Input pilihan stasiun asal keberangkatan */}
         <div className={`relative ${showFromDropdown ? "z-40" : "z-20"}`}>
           <div className="flex items-center justify-between mb-1">
             <label
@@ -304,6 +307,7 @@ export default function SearchPanel({
         </div>
 
         {/* Swap Button */}
+        {/* Tombol cepat menukar posisi asal dan tujuan */}
         <div className="relative flex justify-center -my-2 z-10">
           <button
             type="button"
@@ -320,7 +324,7 @@ export default function SearchPanel({
           </button>
         </div>
 
-        {/* Destination Input & Autocomplete */}
+        {/* Input pilihan stasiun tujuan kedatangan */}
         <div className={`relative ${showToDropdown ? "z-40" : "z-20"}`}>
           <label
             className="block text-[11px] font-bold uppercase tracking-wider mb-1"
@@ -415,7 +419,7 @@ export default function SearchPanel({
           )}
         </div>
 
-        {/* Quick Favorite Location Chips */}
+        {/* Tombol pintasan cepat memilih lokasi tujuan populer (Kampus, Mall, Stasiun) */}
         <div className="space-y-1.5 pt-1">
           <span
             className="text-xs font-bold uppercase tracking-wider"
@@ -463,7 +467,7 @@ export default function SearchPanel({
           </div>
         </div>
 
-        {/* Preferences & Time */}
+        {/* Pilihan waktu keberangkatan dan preferensi rute (Rekomendasi, Tercepat, Termurah) */}
         <div className="grid grid-cols-2 gap-2 pt-0.5">
           <div>
             <label
@@ -514,7 +518,7 @@ export default function SearchPanel({
           </div>
         </div>
 
-        {/* Primary CTA */}
+        {/* Tombol utama untuk mencari rute perjalanan */}
         <button
           type="submit"
           disabled={!toLocation || isLoading}

@@ -9,6 +9,7 @@ interface TicketViewProps {
   onClose?: () => void;
 }
 
+// Komponen modal boarding pass digital dengan kode QR dan efek holografik
 export default function TicketView({ route, onClose }: TicketViewProps) {
   const [isHolographic, setIsHolographic] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,7 +27,7 @@ export default function TicketView({ route, onClose }: TicketViewProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl">
-      {/* Close Button — fixed to top-right of backdrop so it's never clipped */}
+      {/* Tombol untuk menutup modal boarding pass */}
       {onClose && (
         <button
           onClick={onClose}
@@ -42,7 +43,7 @@ export default function TicketView({ route, onClose }: TicketViewProps) {
         className="relative w-full max-w-sm animate-fadeIn"
         style={{ perspective: "1000px" }}
       >
-        {/* === BOARDING PASS CARD === */}
+        {/* Kartu digital boarding pass tiket penumpang */}
         <div
           className={`relative rounded-[28px] overflow-hidden shadow-[0_32px_80px_-10px_rgba(0,0,0,0.5)] transition-all duration-700 cursor-pointer ${
             isHolographic ? "scale-[1.02] rotate-y-3" : ""
@@ -147,7 +148,7 @@ export default function TicketView({ route, onClose }: TicketViewProps) {
             <div className="w-4 h-8 rounded-full bg-black/70 -mr-4 shrink-0" />
           </div>
 
-          {/* === BOTTOM STUB — QR Code Section === */}
+          {/* Bagian kode QR tap-in gate stasiun dan kode tiket */}
           <div className="relative z-10 p-6 pt-5">
             <div className="flex items-center justify-between">
               {/* Ticket Code & Barcode info */}
@@ -215,7 +216,7 @@ export default function TicketView({ route, onClose }: TicketViewProps) {
           </p>
         </div>
 
-        {/* === ACTION BUTTONS below card === */}
+        {/* Tombol aksi simpan tiket, cetak tiket, dan bagikan tiket */}
         <div className="flex items-center space-x-3 mt-5">
           <button
             onClick={() => alert("Ticket saved to gallery!")}

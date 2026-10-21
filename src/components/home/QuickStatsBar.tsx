@@ -1,8 +1,10 @@
 "use client";
 
+// Baris statistik cepat yang menampilkan data ringkasan jaringan transportasi
 import { Route, MapPin, Bus, GitBranch } from "lucide-react";
 
 export default function QuickStatsBar() {
+  // Data statistik: jumlah rute, stasiun, kendaraan, dan jalur transit
   const stats = [
     { label: "Routes Active",  value: "12+", icon: Route,     accentColor: "var(--accent-cyber-lime)" },
     { label: "Stations & Hubs", value: "38", icon: MapPin,    accentColor: "var(--accent-cyber-cyan)" },
