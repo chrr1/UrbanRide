@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
-import { Bus, Train, Layers } from "lucide-react";
+import { Bus, Train, Layers, LocateFixed } from "lucide-react";
 import { RouteOption, VehicleInfo, LocationItem, StopItem } from "@/data/mockData";
 import { MAP_PROVIDERS } from "@/config/mapConfig";
+
+const DEFAULT_CENTER: [number, number] = [-6.1980, 106.8280];
+const DEFAULT_ZOOM = 13;
 
 interface MapViewProps {
   selectedRoute?: RouteOption | null;
@@ -31,6 +34,10 @@ export default function MapView({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<L.LayerGroup | null>(null);
   const polylinesRef = useRef<L.Polyline[]>([]);
+  const initialViewRef = useRef<{ center: L.LatLng; zoom: number } | null>(null);
+  const hasSavedInitialViewRef = useRef<boolean>(false);
+
+  const [isMapMoved, setIsMapMoved] = useState<boolean>(false);
 
   // Inisialisasi peta Leaflet dan canvas utama
   useEffect(() => {
@@ -38,10 +45,15 @@ export default function MapView({
 
     // Menentukan titik tengah peta (koordinat Jakarta Pusat)
     const map = L.map(mapContainerRef.current, {
-      center: [-6.1980, 106.8280],
-      zoom: 13,
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
       zoomControl: false,
     });
+
+    initialViewRef.current = {
+      center: L.latLng(DEFAULT_CENTER[0], DEFAULT_CENTER[1]),
+      zoom: DEFAULT_ZOOM,
+    };
 
     // Mengambil tile peta dasar dari OpenStreetMap
     const currentProvider = MAP_PROVIDERS.openStreetMap;
@@ -84,9 +96,24 @@ export default function MapView({
       resizeObserver.observe(mapContainerRef.current);
     }
 
+    // Pantau pergeseran/zoom peta untuk menandai apakah posisi berubah dari posisi awal
+    const handleViewportChange = () => {
+      if (!initialViewRef.current) return;
+      const currentCenter = map.getCenter();
+      const currentZoom = map.getZoom();
+      const distance = currentCenter.distanceTo(initialViewRef.current.center);
+      const zoomChanged = Math.abs(currentZoom - initialViewRef.current.zoom) > 0.01;
+      setIsMapMoved(distance > 25 || zoomChanged);
+    };
+
+    map.on("moveend", handleViewportChange);
+    map.on("zoomend", handleViewportChange);
+
     return () => {
       cancelAnimationFrame(rafId);
       resizeObserver.disconnect();
+      map.off("moveend", handleViewportChange);
+      map.off("zoomend", handleViewportChange);
       map.remove();
       mapRef.current = null;
     };
@@ -292,7 +319,34 @@ export default function MapView({
     if (bounds.length > 0) {
       map.fitBounds(L.latLngBounds(bounds), { padding: [80, 80], maxZoom: 15 });
     }
+
+    // Simpan posisi awal & tingkat zoom pertama kali peta selesai menyesuaikan bounds
+    if (!hasSavedInitialViewRef.current) {
+      initialViewRef.current = {
+        center: map.getCenter(),
+        zoom: map.getZoom(),
+      };
+      hasSavedInitialViewRef.current = true;
+      setIsMapMoved(false);
+    }
   }, [selectedRoute, activeVehicle, locations, originLocation, destinationLocation, activeJourneyMode, activeStopIndex, onSelectStation]);
+
+  // Mengembalikan peta ke posisi awal dan tingkat zoom sebelumnya
+  const handleRecenter = () => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const target = initialViewRef.current ?? {
+      center: L.latLng(DEFAULT_CENTER[0], DEFAULT_CENTER[1]),
+      zoom: DEFAULT_ZOOM,
+    };
+
+    map.flyTo(target.center, target.zoom, {
+      animate: true,
+      duration: 0.6,
+    });
+    setIsMapMoved(false);
+  };
 
   const [activeFilter, setActiveFilter] = useState<"all" | "bus" | "train">("all");
 
@@ -341,6 +395,24 @@ export default function MapView({
           <span>Metro</span>
         </button>
       </div>
+
+      {/* Tombol Kembali ke Lokasi Awal (Recenter Map) di atas kontrol zoom */}
+      <button
+        type="button"
+        onClick={handleRecenter}
+        aria-label="Kembali ke lokasi awal"
+        title="Kembali ke lokasi awal"
+        className={`absolute bottom-[88px] right-2.5 z-10 w-10 h-10 rounded-xl backdrop-blur-md border shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+          isMapMoved ? "ring-2 ring-emerald-500/40" : ""
+        }`}
+        style={{
+          background: "var(--panel-bg)",
+          borderColor: isMapMoved ? "var(--accent-cyber-lime)" : "var(--border)",
+          color: isMapMoved ? "var(--accent-cyber-lime)" : "var(--foreground)",
+        }}
+      >
+        <LocateFixed className="w-5 h-5" />
+      </button>
 
       <div ref={mapContainerRef} className="w-full h-full rounded-2xl overflow-hidden z-0" />
     </div>
